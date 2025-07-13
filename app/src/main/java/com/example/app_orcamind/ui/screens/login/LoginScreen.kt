@@ -120,13 +120,4 @@ fun LoginLayout(
 @Preview
 @Composable
 fun LoginScreenPreview() {
-    LoginLayout(
-        currentScrambledWord = TODO(),
-        wordCount = TODO(),
-        isGuessWrong = TODO(),
-        userGuess = TODO(),
-        onUserGuessChanged = TODO(),
-        onKeyboardDone = TODO(),
-        modifier = TODO()
-    )
 }

@@ -1,4 +1,4 @@
-package com.example.app_orcamind.ui.screens
+package com.example.app_orcamind.ui.screens.home
 
 import androidx.compose.runtime.Composable
 
