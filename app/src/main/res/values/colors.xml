@@ -3,8 +3,35 @@
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
+
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
+
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="yellow_primary">#FFFFC107</color>
+    <color name="yellow_dark">#FFFFA000</color>
+    <color name="yellow_light">#FFFFECB3</color>
+
+    <color name="red_primary">#FFF44336</color>
+    <color name="red_dark">#FFD32F2F</color>
+    <color name="red_light">#FFFFCDD2</color>
+
+    <color name="blue_primary">#FF2196F3</color>
+    <color name="blue_dark">#FF1976D2</color>
+    <color name="blue_light">#FFBBDEFB</color>
+
+    <color name="green_primary">#FF4CAF50</color>
+    <color name="green_dark">#FF388E3C</color>
+    <color name="green_light">#FFC8E6C9</color>
+
+    <color name="gray_light">#FFEEEEEE</color>
+    <color name="gray_medium">#FF9E9E9E</color>
+    <color name="gray_dark">#FF616161</color>
+
+    <!-- Cores de fundo ou componentes -->
+    <color name="background">#FFF5F5F5</color>
+    <color name="surface">#FFFFFFFF</color>
+    <color name="error">#FFB00020</color>
 </resources>

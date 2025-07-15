@@ -11,6 +11,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DividerDefaults
@@ -25,6 +26,8 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -66,6 +69,9 @@ fun LoginScreen() {
         ) {
             Button(
                 modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    colorResource(R.color.blue_primary)
+                ),
                 onClick = { }
             ) {
                 Text(
@@ -93,6 +99,9 @@ fun LoginLayout(
 
     Card(
         modifier = modifier,
+        colors = CardDefaults.cardColors(
+            colorResource(R.color.green_light)
+        ),
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
     ) {
         Column(
@@ -102,12 +111,16 @@ fun LoginLayout(
         ) {
             OutlinedButton(
                 onClick = {},
+                colors = ButtonDefaults.buttonColors(
+                    colorResource(R.color.green_light)
+                ),
                 modifier = Modifier
                     .padding(horizontal = 4.dp, vertical = 1.dp)
                     .align(alignment = Alignment.End),
             ) {
                 Text(
                     text = "Cadastre-se",
+                    color = Color.Black,
                     style = typography.titleMedium,
                 )
             }
