@@ -167,7 +167,7 @@ fun LoginLayout(
                     disabledContainerColor = colorScheme.surface,
                 ),
                 onValueChange = onUserEmailChanged,
-                placeholder = { Text(text = "Email") },
+                placeholder = { Text(text = stringResource(R.string.email)) },
                 isError = isGuessWrong,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Done,
@@ -188,7 +188,7 @@ fun LoginLayout(
                     disabledContainerColor = colorScheme.surface
                 ),
                 onValueChange = onUserPasswordChanged,
-                placeholder = { Text(text = "Password") },
+                placeholder = { Text(text = stringResource(R.string.password)) },
                 isError = isGuessWrong,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Done,
