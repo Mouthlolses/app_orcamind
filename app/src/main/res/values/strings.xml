@@ -1,8 +1,10 @@
 <resources>
     <string name="app_name">app_orcamind</string>
     <string name="submit">Entrar</string>
+    <string name="registrar">Cadastrar</string>
     <string name="access">Acesse sua conta</string>
     <string name="register">Registre-se</string>
+    <string name="criarConta">Criar Conta</string>
     <string name="email">Email</string>
     <string name="name">Nome</string>
     <string name="password">Password</string>

@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.app_orcamind.R
+import com.example.app_orcamind.ui.components.GoogleSignInButton
 
 
 @Composable
@@ -99,7 +100,26 @@ fun LoginScreen(loginViewModel: LoginViewModel = viewModel()) {
                     fontSize = 16.sp
                 )
             }
-
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    colorResource(R.color.blue_primary)
+                ),
+                onClick = { loginViewModel.performLogin() }
+            ) {
+                Text(
+                    text = stringResource(R.string.criarConta),
+                    fontSize = 16.sp
+                )
+            }
+            Text(
+                text = "Ou"
+            )
+            GoogleSignInButton(
+                text = "Entrar com Google",
+                loading = false,
+                onClick = {}
+            )
         }
     }
 
@@ -120,9 +140,6 @@ fun LoginLayout(
 
     Card(
         modifier = modifier,
-        colors = CardDefaults.cardColors(
-            colorResource(R.color.green_light)
-        ),
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
     ) {
         Column(
@@ -130,21 +147,6 @@ fun LoginLayout(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(mediumPadding)
         ) {
-            OutlinedButton(
-                onClick = {},
-                colors = ButtonDefaults.buttonColors(
-                    colorResource(R.color.green_light)
-                ),
-                modifier = Modifier
-                    .padding(horizontal = 4.dp, vertical = 1.dp)
-                    .align(alignment = Alignment.End),
-            ) {
-                Text(
-                    text = "Cadastre-se",
-                    color = Color.Black,
-                    style = typography.titleMedium,
-                )
-            }
             HorizontalDivider(Modifier, DividerDefaults.Thickness, DividerDefaults.color)
             Text(
                 text = "Bem Vindo",
