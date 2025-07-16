@@ -76,7 +76,7 @@ fun RegisterLayout(
     responseInputWrong: Boolean
 ) {
 
-    val mediumPadding = dimensionResource(R.dimen.padding_medium)
+    val mediumPadding = dimensionResource(R.dimen.padding_small)
 
     Card(
         modifier = Modifier
@@ -161,7 +161,7 @@ fun RegisterLayout(
                 )
             )
             HorizontalDivider(Modifier, DividerDefaults.Thickness, DividerDefaults.color)
-            Spacer(modifier = Modifier.height(6.dp))
+            Spacer(modifier = Modifier.height(24.dp))
             Button(
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
