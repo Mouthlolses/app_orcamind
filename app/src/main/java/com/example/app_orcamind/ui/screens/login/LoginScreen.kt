@@ -14,6 +14,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme.colorScheme
@@ -31,16 +32,23 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.app_orcamind.R
 
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(loginViewModel: LoginViewModel = viewModel()) {
     val mediumPadding = dimensionResource(R.dimen.padding_medium)
+
+    // Observa os estados do ViewModel
+    val isLoading = loginViewModel.isLoading
+    val loginErrorMessage = loginViewModel.loginErrorMessage
+    val loginSuccess = loginViewModel.loginSuccess
 
     Column(
         modifier = Modifier
@@ -52,14 +60,26 @@ fun LoginScreen() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         LoginLayout(
-            userResponseEmail = "",
-            userResponsePassword = "",
-            isGuessWrong = false,
-            onUserGuessChanged = {},
-            onKeyboardDone = {},
+            userResponseEmail = loginViewModel.userResponseEmail,
+            userResponsePassword = loginViewModel.userResponsePassword,
+            isGuessWrong = loginErrorMessage != null,
+            onKeyboardDone = { loginViewModel.performLogin() },
             modifier = Modifier
-                .padding(mediumPadding)
+                .padding(mediumPadding),
+            onUserEmailChanged = { newEmal -> loginViewModel.updateUserEmail(newEmal) },
+            onUserPasswordChanged = { newPassword -> loginViewModel.updateUserPassword(newPassword) }
         )
+        if (loginErrorMessage != null) {
+            Text(
+                text = loginErrorMessage,
+                color = colorScheme.error,
+                modifier = Modifier.padding(top = mediumPadding)
+            )
+        }
+        if (isLoading) {
+            CircularProgressIndicator(modifier = Modifier.padding(top = mediumPadding))
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -72,7 +92,7 @@ fun LoginScreen() {
                 colors = ButtonDefaults.buttonColors(
                     colorResource(R.color.blue_primary)
                 ),
-                onClick = { }
+                onClick = { loginViewModel.performLogin() }
             ) {
                 Text(
                     text = stringResource(R.string.submit),
@@ -91,7 +111,8 @@ fun LoginLayout(
     userResponseEmail: String,
     userResponsePassword: String,
     isGuessWrong: Boolean,
-    onUserGuessChanged: (String) -> Unit,
+    onUserEmailChanged: (String) -> Unit,
+    onUserPasswordChanged: (String) -> Unit,
     onKeyboardDone: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -145,11 +166,12 @@ fun LoginLayout(
                     unfocusedContainerColor = colorScheme.surface,
                     disabledContainerColor = colorScheme.surface,
                 ),
-                onValueChange = onUserGuessChanged,
-                label = { Text(text = "Email") },
+                onValueChange = onUserEmailChanged,
+                placeholder = { Text(text = "Email") },
                 isError = isGuessWrong,
                 keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Done
+                    imeAction = ImeAction.Done,
+                    keyboardType = KeyboardType.Email
                 ),
                 keyboardActions = KeyboardActions(
                     onDone = { onKeyboardDone() }
@@ -163,13 +185,14 @@ fun LoginLayout(
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = colorScheme.surface,
                     unfocusedContainerColor = colorScheme.surface,
-                    disabledContainerColor = colorScheme.surface,
+                    disabledContainerColor = colorScheme.surface
                 ),
-                onValueChange = onUserGuessChanged,
-                label = { Text(text = "Password") },
+                onValueChange = onUserPasswordChanged,
+                placeholder = { Text(text = "Password") },
                 isError = isGuessWrong,
                 keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Done
+                    imeAction = ImeAction.Done,
+                    keyboardType = KeyboardType.Password
                 ),
                 keyboardActions = KeyboardActions(
                     onDone = { onKeyboardDone() }
@@ -183,5 +206,13 @@ fun LoginLayout(
 @Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() {
-    LoginScreen()
+    LoginLayout(
+        userResponseEmail = "",
+        userResponsePassword = "",
+        isGuessWrong = false,
+        onUserEmailChanged = {},
+        onUserPasswordChanged = {},
+        onKeyboardDone = {},
+        modifier = Modifier
+    )
 }
