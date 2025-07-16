@@ -36,12 +36,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import com.example.app_orcamind.R
 import com.example.app_orcamind.ui.components.GoogleSignInButton
 
 
 @Composable
-fun LoginScreen(loginViewModel: LoginViewModel = viewModel()) {
+fun LoginScreen(loginViewModel: LoginViewModel = viewModel(), navController: NavHostController) {
     val mediumPadding = dimensionResource(R.dimen.padding_medium)
 
     // Observa os estados do ViewModel
@@ -103,7 +104,7 @@ fun LoginScreen(loginViewModel: LoginViewModel = viewModel()) {
                 colors = ButtonDefaults.buttonColors(
                     colorResource(R.color.blue_primary)
                 ),
-                onClick = {  }
+                onClick = { navController.navigate("registerScreen") }
             ) {
                 Text(
                     text = stringResource(R.string.criarConta),
