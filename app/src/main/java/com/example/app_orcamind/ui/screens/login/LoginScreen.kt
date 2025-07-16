@@ -105,7 +105,7 @@ fun LoginScreen(loginViewModel: LoginViewModel = viewModel()) {
                 colors = ButtonDefaults.buttonColors(
                     colorResource(R.color.blue_primary)
                 ),
-                onClick = { loginViewModel.performLogin() }
+                onClick = {  }
             ) {
                 Text(
                     text = stringResource(R.string.criarConta),
@@ -155,6 +155,8 @@ fun LoginLayout(
             HorizontalDivider(Modifier, DividerDefaults.Thickness, DividerDefaults.color)
             Text(
                 text = stringResource(R.string.access),
+                modifier = Modifier
+                    .padding(top = 12.dp),
                 textAlign = TextAlign.Center,
                 style = typography.titleMedium,
             )
@@ -162,7 +164,9 @@ fun LoginLayout(
                 value = userResponseEmail,
                 singleLine = true,
                 shape = shapes.large,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp, bottom = 6.dp),
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = colorScheme.surface,
                     unfocusedContainerColor = colorScheme.surface,

@@ -36,7 +36,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.app_orcamind.R
-import com.example.app_orcamind.ui.components.GoogleSignInButton
 
 
 @Composable
