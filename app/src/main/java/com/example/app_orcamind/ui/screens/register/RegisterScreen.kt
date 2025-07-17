@@ -35,12 +35,16 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.app_orcamind.R
 
 
 @Composable
-fun RegisterScreen() {
-    val input = ""
+fun RegisterScreen(registerViewModel: RegisterViewModel = viewModel()) {
+    val input = registerViewModel.userResponseRegisterEmail
+    val input2 = registerViewModel.userResponseRegisterPassword
+    val createUserError = registerViewModel.createUserErrorMessage
+
     val mediumPadding = dimensionResource(R.dimen.padding_medium)
 
     Column(
@@ -53,21 +57,47 @@ fun RegisterScreen() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         RegisterLayout(
-            responseName = input,
             responseEmail = input,
-            responsePassword = input,
-            onUserEmailChanged = {},
-            onUserPasswordChanged = {},
-            onKeyboardDone = {},
-            responseInputWrong = false
+            responsePassword = input2,
+            onUserEmailChanged = { createNewEmailUser ->
+                registerViewModel.createUserEmail(
+                    createNewEmailUser
+                )
+            },
+            onUserPasswordChanged = { createNewPasswordUser ->
+                registerViewModel.createUserPassword(
+                    createNewPasswordUser
+                )
+            },
+            onKeyboardDone = { registerViewModel.performCreateUser() },
+            responseInputWrong = createUserError != null
         )
+        Spacer(modifier = Modifier.height(24.dp))
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(mediumPadding),
+            verticalArrangement = Arrangement.spacedBy(mediumPadding),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    colorResource(R.color.blue_primary)
+                ),
+                onClick = { registerViewModel.performCreateUser() }
+            ) {
+                Text(
+                    text = stringResource(R.string.registrar),
+                    fontSize = 16.sp
+                )
+            }
+        }
     }
 }
 
-
 @Composable
 fun RegisterLayout(
-    responseName: String,
     responseEmail: String,
     responsePassword: String,
     onUserEmailChanged: (String) -> Unit,
@@ -94,35 +124,12 @@ fun RegisterLayout(
             )
             HorizontalDivider(Modifier, DividerDefaults.Thickness, DividerDefaults.color)
             OutlinedTextField(
-                value = responseName,
-                singleLine = true,
-                shape = shapes.large,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 12.dp),
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = colorScheme.surface,
-                    unfocusedContainerColor = colorScheme.surface,
-                    disabledContainerColor = colorScheme.surface,
-                ),
-                onValueChange = onUserEmailChanged,
-                placeholder = { Text(text = stringResource(R.string.name)) },
-                isError = responseInputWrong,
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Done,
-                    keyboardType = KeyboardType.Email
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = { onKeyboardDone() }
-                )
-            )
-            OutlinedTextField(
                 value = responseEmail,
                 singleLine = true,
                 shape = shapes.large,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 12.dp),
+                    .padding(top = 12.dp, bottom = 12.dp),
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = colorScheme.surface,
                     unfocusedContainerColor = colorScheme.surface,
@@ -143,7 +150,9 @@ fun RegisterLayout(
                 value = responsePassword,
                 singleLine = true,
                 shape = shapes.large,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp),
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = colorScheme.surface,
                     unfocusedContainerColor = colorScheme.surface,
@@ -161,19 +170,6 @@ fun RegisterLayout(
                 )
             )
             HorizontalDivider(Modifier, DividerDefaults.Thickness, DividerDefaults.color)
-            Spacer(modifier = Modifier.height(24.dp))
-            Button(
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(
-                    colorResource(R.color.blue_primary)
-                ),
-                onClick = { }
-            ) {
-                Text(
-                    text = stringResource(R.string.registrar),
-                    fontSize = 16.sp
-                )
-            }
         }
     }
 }

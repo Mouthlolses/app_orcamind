@@ -60,8 +60,8 @@ class LoginViewModel : ViewModel() {
                 // Ele converte a Task assíncrona do Firebase (signInWithEmailAndPassword) em uma função suspend.
                 // Ela "espera" a conclusão da operação do Firebase de forma não-bloqueante.
 
-                auth.signInWithEmailAndPassword(userResponseEmail,userResponsePassword).await()
-
+                auth.signInWithEmailAndPassword(userResponseEmail,userResponsePassword)
+                    .await()
                 // Se chegou aqui, o login foi bem-sucedido
                 loginSuccess = true
                 Log.i("authFirebase","Login Success")
