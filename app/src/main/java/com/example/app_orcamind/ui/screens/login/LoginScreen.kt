@@ -51,14 +51,12 @@ fun LoginScreen(
 ) {
     val mediumPadding = dimensionResource(R.dimen.padding_medium)
 
-
     // Coleta dos fluxos da ViewModel como estados observáveis
     val isLoading by loginViewModel.isLoading.collectAsState()
     val loginErrorMessage by loginViewModel.loginErrorMessage.collectAsState()
     val loginSuccess by loginViewModel.loginSuccess.collectAsState()
     val email by loginViewModel.userResponseEmail.collectAsState()
     val password by loginViewModel.userResponsePassword.collectAsState()
-
 
     // Se login foi bem-sucedido, navegar
 //    LaunchedEffect(loginSuccess) {
@@ -68,9 +66,6 @@ fun LoginScreen(
 //            }
 //        }
 //    }
-
-
-
 
     Column(
         modifier = Modifier
