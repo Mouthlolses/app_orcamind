@@ -24,6 +24,9 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
@@ -42,13 +45,32 @@ import com.example.app_orcamind.ui.components.GoogleSignInButton
 
 
 @Composable
-fun LoginScreen(loginViewModel: LoginViewModel = viewModel(), navController: NavHostController) {
+fun LoginScreen(
+    loginViewModel: LoginViewModel = viewModel(),
+    navController: NavHostController
+) {
     val mediumPadding = dimensionResource(R.dimen.padding_medium)
 
-    // Observa os estados do ViewModel
-    val isLoading = loginViewModel.isLoading
-    val loginErrorMessage = loginViewModel.loginErrorMessage
-    val loginSuccess = loginViewModel.loginSuccess
+
+    // Coleta dos fluxos da ViewModel como estados observáveis
+    val isLoading by loginViewModel.isLoading.collectAsState()
+    val loginErrorMessage by loginViewModel.loginErrorMessage.collectAsState()
+    val loginSuccess by loginViewModel.loginSuccess.collectAsState()
+    val email by loginViewModel.userResponseEmail.collectAsState()
+    val password by loginViewModel.userResponsePassword.collectAsState()
+
+
+    // Se login foi bem-sucedido, navegar
+//    LaunchedEffect(loginSuccess) {
+//        if (loginSuccess) {
+//            navController.navigate("homeScreen") {
+//                popUpTo("loginScreen") { inclusive = true }
+//            }
+//        }
+//    }
+
+
+
 
     Column(
         modifier = Modifier
@@ -60,8 +82,8 @@ fun LoginScreen(loginViewModel: LoginViewModel = viewModel(), navController: Nav
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         LoginLayout(
-            userResponseEmail = loginViewModel.userResponseEmail,
-            userResponsePassword = loginViewModel.userResponsePassword,
+            userResponseEmail = email,
+            userResponsePassword = password,
             isGuessWrong = loginErrorMessage != null,
             onKeyboardDone = { loginViewModel.performLogin() },
             modifier = Modifier
@@ -69,13 +91,13 @@ fun LoginScreen(loginViewModel: LoginViewModel = viewModel(), navController: Nav
             onUserEmailChanged = { newEmal -> loginViewModel.updateUserEmail(newEmal) },
             onUserPasswordChanged = { newPassword -> loginViewModel.updateUserPassword(newPassword) }
         )
-        if (loginErrorMessage != null) {
-            Text(
-                text = loginErrorMessage,
-                color = colorScheme.error,
-                modifier = Modifier.padding(top = mediumPadding)
-            )
-        }
+       loginErrorMessage?.let { error ->
+           Text(
+               text = error,
+               color = colorScheme.error,
+               modifier = Modifier.padding(top = mediumPadding)
+           )
+       }
         if (isLoading) {
             CircularProgressIndicator(modifier = Modifier.padding(top = mediumPadding))
         }

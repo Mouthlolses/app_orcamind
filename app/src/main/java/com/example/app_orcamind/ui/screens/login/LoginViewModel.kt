@@ -8,49 +8,53 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import kotlin.math.log
 
 class LoginViewModel : ViewModel() {
 
-    var userResponseEmail by mutableStateOf("")
-        private set
+    private val _userResponseEmail = MutableStateFlow("")
+    val userResponseEmail: StateFlow<String> = _userResponseEmail
 
-    var userResponsePassword by mutableStateOf("")
-        private set
+    private val _userResponsePassword = MutableStateFlow("")
+    val userResponsePassword: StateFlow<String> = _userResponsePassword
 
     // --- Variáveis de estado para o processo de login ---
-    var isLoading by mutableStateOf(false)
-        private set
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading
 
-    var loginErrorMessage by mutableStateOf<String?>(null)
 
-    var loginSuccess by mutableStateOf(false)
-        private set
+    private val _loginErrorMessage = MutableStateFlow<String?>(null)
+    val loginErrorMessage: StateFlow<String?> = _loginErrorMessage
+    private val _loginSuccess = MutableStateFlow(false)
+    val loginSuccess: StateFlow<Boolean> = _loginSuccess
 
     // Instância do Firebase Auth
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
 
     // --- Funções para atualizar e-mail e senha ---
     fun updateUserEmail(newEmail: String) {
-        userResponseEmail = newEmail
+        _userResponseEmail.value = newEmail
         // Limpa mensagens de erro ao digitar novamente
-        loginErrorMessage = null
+        _loginErrorMessage.value = null
     }
 
     fun updateUserPassword(newPassword: String) {
-        userResponsePassword = newPassword
-        loginErrorMessage = null
+        _userResponsePassword.value = newPassword
+        _loginErrorMessage.value = null
     }
 
     fun performLogin() {
-        isLoading = true // Indica que o login está em andamento
-        loginErrorMessage = null // Limpa qualquer mensagem de erro anterior
-        loginSuccess = false // Reseta o status de sucesso
+        _isLoading.value = true // Indica que o login está em andamento
+        _loginErrorMessage.value = null // Limpa qualquer mensagem de erro anterior
+        _loginSuccess.value = false // Reseta o status de sucesso
 
-        if (userResponseEmail.isBlank() || userResponsePassword.isBlank()) {
-            loginErrorMessage = "Por favor, preencha todos os campos."
-            isLoading = false
+        if (_userResponseEmail.value.isBlank() || _userResponsePassword.value.isBlank()) {
+            _loginErrorMessage.value = "Por favor, preencha todos os campos."
+            _isLoading.value = false
             return
         }
 
@@ -60,15 +64,15 @@ class LoginViewModel : ViewModel() {
                 // Ele converte a Task assíncrona do Firebase (signInWithEmailAndPassword) em uma função suspend.
                 // Ela "espera" a conclusão da operação do Firebase de forma não-bloqueante.
 
-                auth.signInWithEmailAndPassword(userResponseEmail,userResponsePassword)
+                auth.signInWithEmailAndPassword(_userResponseEmail.value,_userResponsePassword.value)
                     .await()
                 // Se chegou aqui, o login foi bem-sucedido
-                loginSuccess = true
+                _loginSuccess.value = true
                 Log.i("authFirebase","Login Success")
 
             } catch (e: Exception){
-                loginSuccess = false
-                loginErrorMessage = when (e) {
+                _loginSuccess.value = false
+                _loginErrorMessage.value = when (e) {
                     is FirebaseAuthException -> { // Erros específicos do Firebase
                         when (e.errorCode) {
                             "ERROR_INVALID_EMAIL" -> "O e-mail digitado é inválido."
@@ -83,15 +87,15 @@ class LoginViewModel : ViewModel() {
                 }
                 println("Erro no login: ${e.message}")
             } finally {
-              isLoading = false
+              _isLoading.value = false
             }
         }
     }
 
     fun resetLoginState() {
-        isLoading = false
-        loginErrorMessage = null
-        loginSuccess = false
+        _isLoading.value = false
+        _loginErrorMessage.value = null
+        _loginSuccess.value = false
         // Opcional: limpar e-mail e senha
         // userResponseEmail = ""
         // userResponsePassword = ""
