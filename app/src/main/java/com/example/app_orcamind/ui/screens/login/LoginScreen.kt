@@ -82,7 +82,7 @@ fun LoginScreen(
             onKeyboardDone = { loginViewModel.performLogin() },
             modifier = Modifier
                 .padding(mediumPadding),
-            onUserEmailChanged = { newEmal -> loginViewModel.updateUserEmail(newEmal) },
+            onUserEmailChanged = { newEmail -> loginViewModel.updateUserEmail(newEmail) },
             onUserPasswordChanged = { newPassword -> loginViewModel.updateUserPassword(newPassword) }
         )
        loginErrorMessage?.let { error ->

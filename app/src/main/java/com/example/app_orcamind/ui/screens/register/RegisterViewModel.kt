@@ -43,7 +43,6 @@ class RegisterViewModel : ViewModel() {
     }
 
     fun performCreateUser() {
-
         isLoading = true
         createUserErrorMessage = null
         createUserSuccess = false

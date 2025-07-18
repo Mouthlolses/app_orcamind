@@ -43,7 +43,7 @@ class LoginViewModel : ViewModel() {
         _loginErrorMessage.value = null
     }
 
-    fun performLogin() {
+    fun performLogin(email: String = _userResponseEmail.value, password: String = _userResponsePassword.value) {
         _isLoading.value = true // Indica que o login está em andamento
         _loginErrorMessage.value = null // Limpa qualquer mensagem de erro anterior
         _loginSuccess.value = false // Reseta o status de sucesso
@@ -60,7 +60,7 @@ class LoginViewModel : ViewModel() {
                 // Ele converte a Task assíncrona do Firebase (signInWithEmailAndPassword) em uma função suspend.
                 // Ela "espera" a conclusão da operação do Firebase de forma não-bloqueante.
 
-                auth.signInWithEmailAndPassword(_userResponseEmail.value,_userResponsePassword.value)
+                auth.signInWithEmailAndPassword(email,password)
                     .await()
                 // Se chegou aqui, o login foi bem-sucedido
                 _loginSuccess.value = true
