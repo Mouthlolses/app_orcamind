@@ -66,7 +66,7 @@ fun GoogleSignInButton(
                 Text(
                     text = text,
 
-                )
+                    )
             }
         }
     }

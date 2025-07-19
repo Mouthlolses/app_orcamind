@@ -44,6 +44,7 @@ android {
 
 dependencies {
 
+    implementation(libs.play.services.auth.v2100)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)

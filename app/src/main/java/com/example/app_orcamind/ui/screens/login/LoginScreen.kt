@@ -1,5 +1,10 @@
 package com.example.app_orcamind.ui.screens.login
 
+import android.content.Context
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,8 +31,10 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -41,14 +48,55 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.app_orcamind.R
 import com.example.app_orcamind.ui.components.GoogleSignInButton
+import com.google.android.gms.auth.api.identity.BeginSignInRequest
+import com.google.android.gms.auth.api.identity.Identity
 
 
 @Composable
 fun LoginScreen(
     loginViewModel: LoginViewModel = viewModel(),
-    navController: NavHostController
+    navController: NavHostController,
+    context: Context = LocalContext.current
 ) {
+
     val mediumPadding = dimensionResource(R.dimen.padding_medium)
+
+    val oneTapClient = remember { Identity.getSignInClient(context) }
+
+    val signInRequest = remember {
+        BeginSignInRequest.builder()
+            .setGoogleIdTokenRequestOptions(
+                BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
+                    .setSupported(true)
+                    .setServerClientId("279046583617-3caa6ek08srq266ts2njvaq5duj9ihhk.apps.googleusercontent.com")
+                    .setFilterByAuthorizedAccounts(false)
+                    .build()
+            )
+            .setAutoSelectEnabled(true)
+            .build()
+    }
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartIntentSenderForResult()
+    ) { result ->
+
+        try {
+            val credential = oneTapClient.getSignInCredentialFromIntent(result.data)
+            val idToken = credential.googleIdToken
+
+            if (idToken != null) {
+                loginViewModel.signInWithGoogle(
+                    idToken,
+                    onSuccess = { Log.i("Login", "Sucesso") },
+                    onFailure = { error -> Log.i("Login", "Erro: $error") }
+                )
+            }
+
+        } catch (e: Exception) {
+            Log.e("Login", "Erro ao obter token", e)
+        }
+    }
+
 
     // Coleta dos fluxos da ViewModel como estados observáveis
     val isLoading by loginViewModel.isLoading.collectAsState()
@@ -85,13 +133,13 @@ fun LoginScreen(
             onUserEmailChanged = { newEmail -> loginViewModel.updateUserEmail(newEmail) },
             onUserPasswordChanged = { newPassword -> loginViewModel.updateUserPassword(newPassword) }
         )
-       loginErrorMessage?.let { error ->
-           Text(
-               text = error,
-               color = colorScheme.error,
-               modifier = Modifier.padding(top = mediumPadding)
-           )
-       }
+        loginErrorMessage?.let { error ->
+            Text(
+                text = error,
+                color = colorScheme.error,
+                modifier = Modifier.padding(top = mediumPadding)
+            )
+        }
         if (isLoading) {
             CircularProgressIndicator(modifier = Modifier.padding(top = mediumPadding))
         }
@@ -133,7 +181,19 @@ fun LoginScreen(
             GoogleSignInButton(
                 text = "Entrar com Google",
                 loading = false,
-                onClick = {}
+                onClick = {
+                    oneTapClient.beginSignIn(signInRequest)
+                        .addOnSuccessListener { result ->
+                            val intentSenderRequest =
+                                IntentSenderRequest.Builder(result.pendingIntent.intentSender)
+                                    .build()
+                            launcher.launch(intentSenderRequest)
+                            Log.i("Login", "Sucesso")
+                        }
+                        .addOnFailureListener { e ->
+                            Log.e("Login", "Erro ao iniciar signIn: ${e.message}")
+                        }
+                }
             )
         }
     }
