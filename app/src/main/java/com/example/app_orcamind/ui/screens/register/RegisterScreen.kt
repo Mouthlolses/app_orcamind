@@ -1,5 +1,6 @@
 package com.example.app_orcamind.ui.screens.register
 
+import android.R.attr.height
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -26,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
@@ -38,7 +40,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.app_orcamind.R
-import androidx.compose.runtime.getValue
 
 
 @Composable
@@ -108,11 +109,13 @@ fun RegisterLayout(
     responseInputWrong: Boolean
 ) {
 
-    val mediumPadding = dimensionResource(R.dimen.padding_small)
+    val mediumPadding = dimensionResource(R.dimen.padding_medium)
+    val maxHeight = dimensionResource(R.dimen.max_height)
 
     Card(
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .height(maxHeight),
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
     ) {
         Column(
@@ -180,5 +183,12 @@ fun RegisterLayout(
 @Preview(showBackground = true)
 @Composable
 fun RegisterPreview() {
-    RegisterScreen()
+    RegisterLayout(
+        responseEmail = "",
+        responsePassword = "",
+        onUserEmailChanged = {},
+        onUserPasswordChanged = {},
+        onKeyboardDone = {},
+        responseInputWrong = false
+    )
 }
