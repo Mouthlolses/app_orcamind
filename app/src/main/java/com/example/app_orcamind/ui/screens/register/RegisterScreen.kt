@@ -45,7 +45,7 @@ import androidx.compose.runtime.getValue
 fun RegisterScreen(registerViewModel: RegisterViewModel = viewModel()) {
     val input by registerViewModel.userResponseRegisterEmail.collectAsState()
     val input2 by registerViewModel.userResponseRegisterPassword.collectAsState()
-    val createUserError = registerViewModel.createUserErrorMessage
+    val createUserError by registerViewModel.createUserErrorMessage.collectAsState()
 
     val mediumPadding = dimensionResource(R.dimen.padding_medium)
 

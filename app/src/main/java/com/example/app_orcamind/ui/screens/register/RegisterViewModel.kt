@@ -3,7 +3,6 @@ package com.example.app_orcamind.ui.screens.register
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
@@ -21,13 +20,12 @@ class RegisterViewModel : ViewModel() {
     private val _userResponseRegisterPassword = MutableStateFlow("")
     val userResponseRegisterPassword: StateFlow<String> = _userResponseRegisterPassword
 
-    var isLoading by mutableStateOf(false)
-        private set
+    private val _isLoading = MutableStateFlow(false)
 
-    var createUserErrorMessage by mutableStateOf<String?>(null)
+    private val _createUserErrorMessage = MutableStateFlow<String?>(null)
+    val createUserErrorMessage: StateFlow<String?> = _createUserErrorMessage
 
-    var createUserSuccess by mutableStateOf(false)
-        private set
+    private val _createUserSuccess = MutableStateFlow(false)
 
     // Instância do Firebase Auth
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
@@ -36,23 +34,23 @@ class RegisterViewModel : ViewModel() {
     fun createUserEmail(newEmail: String) {
         _userResponseRegisterEmail.value = newEmail
         // Limpa mensagens de erro ao digitar novamente
-        createUserErrorMessage = null
+        _createUserErrorMessage.value = null
     }
 
     fun createUserPassword(newPassword: String) {
         _userResponseRegisterPassword.value = newPassword
-        createUserErrorMessage = null
+        _createUserErrorMessage.value = null
     }
 
     fun performCreateUser() {
-        isLoading = true
-        createUserErrorMessage = null
-        createUserSuccess = false
+        _isLoading.value = true
+        _createUserErrorMessage.value = null
+        _createUserSuccess.value = false
 
 
         if (_userResponseRegisterEmail.value.isBlank() || _userResponseRegisterPassword.value.isBlank()) {
-            createUserErrorMessage = "Por favor, preencha todos os campos"
-            isLoading = false
+            _createUserErrorMessage.value = "Por favor, preencha todos os campos"
+            _isLoading.value = false
             return
         }
 
@@ -63,13 +61,13 @@ class RegisterViewModel : ViewModel() {
                     _userResponseRegisterPassword.value
                 )
                     .await()
-                createUserSuccess = true
+                _createUserSuccess.value = true
 
                 Log.i("createFirebase", "Create User Success")
 
             } catch (e: FirebaseAuthException) {
-                createUserSuccess = false
-                createUserErrorMessage = when (e.errorCode) {
+                _createUserSuccess.value = false
+                _createUserErrorMessage.value = when (e.errorCode) {
                     "ERROR_INVALID_EMAIL" -> "O e-mail digitado é inválido."
                     "ERROR_EMAIL_ALREADY_IN_USE" -> "Este e-mail já está em uso."
                     "ERROR_WEAK_PASSWORD" -> "Senha muito fraca."
@@ -78,10 +76,10 @@ class RegisterViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 // Erro genérico
-                createUserSuccess = false
-                createUserErrorMessage = "Erro desconhecido ao se registrar: ${e.message}"
+                _createUserSuccess.value = false
+                _createUserErrorMessage.value = "Erro desconhecido ao se registrar: ${e.message}"
             } finally {
-                isLoading = false
+                _isLoading.value = false
             }
         }
     }
