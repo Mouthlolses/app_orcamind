@@ -25,6 +25,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
@@ -37,12 +38,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.app_orcamind.R
+import androidx.compose.runtime.getValue
 
 
 @Composable
 fun RegisterScreen(registerViewModel: RegisterViewModel = viewModel()) {
-    val input = registerViewModel.userResponseRegisterEmail
-    val input2 = registerViewModel.userResponseRegisterPassword
+    val input by registerViewModel.userResponseRegisterEmail.collectAsState()
+    val input2 by registerViewModel.userResponseRegisterPassword.collectAsState()
     val createUserError = registerViewModel.createUserErrorMessage
 
     val mediumPadding = dimensionResource(R.dimen.padding_medium)

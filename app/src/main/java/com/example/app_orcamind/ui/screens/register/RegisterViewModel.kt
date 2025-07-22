@@ -8,16 +8,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 class RegisterViewModel : ViewModel() {
 
-    var userResponseRegisterEmail by mutableStateOf("")
-        private set
+    private val _userResponseRegisterEmail = MutableStateFlow("")
+    val userResponseRegisterEmail: StateFlow<String> = _userResponseRegisterEmail
 
-    var userResponseRegisterPassword by mutableStateOf("")
-        private set
+    private val _userResponseRegisterPassword = MutableStateFlow("")
+    val userResponseRegisterPassword: StateFlow<String> = _userResponseRegisterPassword
 
     var isLoading by mutableStateOf(false)
         private set
@@ -32,13 +34,13 @@ class RegisterViewModel : ViewModel() {
 
 
     fun createUserEmail(newEmail: String) {
-        userResponseRegisterEmail = newEmail
+        _userResponseRegisterEmail.value = newEmail
         // Limpa mensagens de erro ao digitar novamente
         createUserErrorMessage = null
     }
 
     fun createUserPassword(newPassword: String) {
-        userResponseRegisterPassword = newPassword
+        _userResponseRegisterPassword.value = newPassword
         createUserErrorMessage = null
     }
 
@@ -48,7 +50,7 @@ class RegisterViewModel : ViewModel() {
         createUserSuccess = false
 
 
-        if (userResponseRegisterEmail.isBlank() || userResponseRegisterPassword.isBlank()) {
+        if (_userResponseRegisterEmail.value.isBlank() || _userResponseRegisterPassword.value.isBlank()) {
             createUserErrorMessage = "Por favor, preencha todos os campos"
             isLoading = false
             return
@@ -57,8 +59,8 @@ class RegisterViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 auth.createUserWithEmailAndPassword(
-                    userResponseRegisterEmail,
-                    userResponseRegisterPassword
+                    _userResponseRegisterEmail.value,
+                    _userResponseRegisterPassword.value
                 )
                     .await()
                 createUserSuccess = true
