@@ -1,18 +1,28 @@
 package com.example.app_orcamind.ui.screens.register
 
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 class RegisterViewModel : ViewModel() {
+
+
+    //Padrão encapsulamento de estado
+    private val _uiState = MutableStateFlow(RegisterUiState())
+    val uiState: StateFlow<RegisterUiState> = _uiState.asStateFlow()
+
+
+    // Instância do Firebase Auth
+    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+
 
     private val _userResponseRegisterEmail = MutableStateFlow("")
     val userResponseRegisterEmail: StateFlow<String> = _userResponseRegisterEmail
@@ -27,19 +37,16 @@ class RegisterViewModel : ViewModel() {
 
     private val _createUserSuccess = MutableStateFlow(false)
 
-    // Instância do Firebase Auth
-    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
 
-
-    fun createUserEmail(newEmail: String) {
-        _userResponseRegisterEmail.value = newEmail
+    fun onEmailChange(newEmail: String) {
+        _uiState.update { it.copy(userResponseRegisterEmail = newEmail) }
         // Limpa mensagens de erro ao digitar novamente
-        _createUserErrorMessage.value = null
+        _uiState.update { it.copy(createUserErrorMessage = null) }
     }
 
-    fun createUserPassword(newPassword: String) {
-        _userResponseRegisterPassword.value = newPassword
-        _createUserErrorMessage.value = null
+    fun onPasswordChange(newPassword: String) {
+        _uiState.update { it.copy(userResponseRegisterPassword = newPassword) }
+        _uiState.update { it.copy(createUserErrorMessage = null) }
     }
 
     fun performCreateUser() {
@@ -47,13 +54,11 @@ class RegisterViewModel : ViewModel() {
         _createUserErrorMessage.value = null
         _createUserSuccess.value = false
 
-
         if (_userResponseRegisterEmail.value.isBlank() || _userResponseRegisterPassword.value.isBlank()) {
             _createUserErrorMessage.value = "Por favor, preencha todos os campos"
             _isLoading.value = false
             return
         }
-
         viewModelScope.launch {
             try {
                 auth.createUserWithEmailAndPassword(
@@ -82,5 +87,51 @@ class RegisterViewModel : ViewModel() {
                 _isLoading.value = false
             }
         }
+    }
+
+
+    //Utilizando essa logica para criar usuário
+    fun newPerformClick() {
+        val email = _uiState.value.userResponseRegisterEmail
+        val password = _uiState.value.userResponseRegisterPassword
+
+        if (email.isBlank() || password.isBlank()) {
+            _uiState.update {
+                it.copy(
+                    isLoading = false,
+                    createUserErrorMessage = "Por favor, preencha todos os campos."
+                )
+            }
+            return
+        }
+
+        _uiState.update {
+            it.copy(
+                isLoading = true,
+                createUserErrorMessage = null,
+                createUserSuccess = false
+            )
+        }
+
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+
+                if (task.isSuccessful) {
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            createUserSuccess = true
+                        )
+                    }
+                } else {
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            createUserSuccess = false,
+                            createUserErrorMessage = task.exception?.message
+                        )
+                    }
+                }
+            }
     }
 }

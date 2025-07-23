@@ -1,6 +1,5 @@
 package com.example.app_orcamind.ui.screens.register
 
-import android.R.attr.height
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -17,6 +16,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme.colorScheme
@@ -30,6 +30,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -44,11 +45,10 @@ import com.example.app_orcamind.R
 
 @Composable
 fun RegisterScreen(registerViewModel: RegisterViewModel = viewModel()) {
-    val input by registerViewModel.userResponseRegisterEmail.collectAsState()
-    val input2 by registerViewModel.userResponseRegisterPassword.collectAsState()
-    val createUserError by registerViewModel.createUserErrorMessage.collectAsState()
+    val uiState by registerViewModel.uiState.collectAsState()
 
     val mediumPadding = dimensionResource(R.dimen.padding_medium)
+
 
     Column(
         modifier = Modifier
@@ -60,22 +60,25 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = viewModel()) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         RegisterLayout(
-            responseEmail = input,
-            responsePassword = input2,
-            onUserEmailChanged = { createNewEmailUser ->
-                registerViewModel.createUserEmail(
-                    createNewEmailUser
-                )
+            responseEmail = uiState.userResponseRegisterEmail,
+            responsePassword = uiState.userResponseRegisterPassword,
+            onUserEmailChanged = {
+                registerViewModel.onEmailChange(it)
             },
-            onUserPasswordChanged = { createNewPasswordUser ->
-                registerViewModel.createUserPassword(
-                    createNewPasswordUser
-                )
+            onUserPasswordChanged = {
+                registerViewModel.onPasswordChange(it)
             },
-            onKeyboardDone = { registerViewModel.performCreateUser() },
-            responseInputWrong = createUserError != null
+            onKeyboardDone = { registerViewModel.newPerformClick() },
+            responseInputWrong = uiState.createUserErrorMessage != null
         )
+        Spacer(modifier = Modifier.height(12.dp))
+        uiState.createUserErrorMessage?.let {
+            Text(text = it, color = Color.Red)
+        }
         Spacer(modifier = Modifier.height(24.dp))
+        if (uiState.isLoading) {
+            CircularProgressIndicator()
+        }
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -88,7 +91,7 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = viewModel()) {
                 colors = ButtonDefaults.buttonColors(
                     colorResource(R.color.blue_primary)
                 ),
-                onClick = { registerViewModel.performCreateUser() }
+                onClick = { registerViewModel.newPerformClick() }
             ) {
                 Text(
                     text = stringResource(R.string.registrar),
