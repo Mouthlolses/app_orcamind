@@ -34,6 +34,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
@@ -58,9 +59,11 @@ fun LoginScreen(
     navController: NavHostController,
     context: Context = LocalContext.current
 ) {
-
+    val uiState by loginViewModel.uiState.collectAsState()
 
     val mediumPadding = dimensionResource(R.dimen.padding_medium)
+
+
 
     val oneTapClient = remember { Identity.getSignInClient(context) }
 
@@ -98,14 +101,6 @@ fun LoginScreen(
         }
     }
 
-
-    // Coleta dos fluxos da ViewModel como estados observáveis
-    val isLoading by loginViewModel.isLoading.collectAsState()
-    val loginErrorMessage by loginViewModel.loginErrorMessage.collectAsState()
-    val loginSuccess by loginViewModel.loginSuccess.collectAsState()
-    val email by loginViewModel.userResponseEmail.collectAsState()
-    val password by loginViewModel.userResponsePassword.collectAsState()
-
     // Se login foi bem-sucedido, navegar
 //    LaunchedEffect(loginSuccess) {
 //        if (loginSuccess) {
@@ -125,23 +120,19 @@ fun LoginScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         LoginLayout(
-            userResponseEmail = email,
-            userResponsePassword = password,
-            isGuessWrong = loginErrorMessage != null,
-            onKeyboardDone = { loginViewModel.performLogin() },
+            userResponseEmail = uiState.userResponseEmail,
+            userResponsePassword = uiState.userResponsePassword,
+            isGuessWrong = uiState.loginErrorMessage != null,
+            onKeyboardDone = { loginViewModel.newPerformClick() },
             modifier = Modifier
                 .padding(mediumPadding),
             onUserEmailChanged = { newEmail -> loginViewModel.updateUserEmail(newEmail) },
             onUserPasswordChanged = { newPassword -> loginViewModel.updateUserPassword(newPassword) }
         )
-        loginErrorMessage?.let { error ->
-            Text(
-                text = error,
-                color = colorScheme.error,
-                modifier = Modifier.padding(top = mediumPadding)
-            )
+        uiState.loginErrorMessage?.let {
+            Text(text = it, color = Color.Red)
         }
-        if (isLoading) {
+        if (uiState.isLoading) {
             CircularProgressIndicator(modifier = Modifier.padding(top = mediumPadding))
         }
 
@@ -157,7 +148,7 @@ fun LoginScreen(
                 colors = ButtonDefaults.buttonColors(
                     colorResource(R.color.blue_primary)
                 ),
-                onClick = { loginViewModel.performLogin() }
+                onClick = { loginViewModel.newPerformClick() }
             ) {
                 Text(
                     text = stringResource(R.string.submit),

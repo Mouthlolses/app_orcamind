@@ -124,20 +124,24 @@ class LoginViewModel : ViewModel() {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
+                    Log.i("Login", "Sucesso")
                     _uiState.update {
                         it.copy(
                             isLoading = false,
                             loginSuccess = true
                         )
                     }
+                    resetLoginState()
                 } else {
                     _uiState.update {
+                        Log.i("Login", "Falha no login")
                         it.copy(
                             isLoading = false,
                             loginSuccess = false,
                             loginErrorMessage = task.exception?.message
                         )
                     }
+                    resetLoginState()
                 }
             }
     }
@@ -157,11 +161,13 @@ class LoginViewModel : ViewModel() {
 
 
     fun resetLoginState() {
-        _isLoading.value = false
-        _loginErrorMessage.value = null
-        _loginSuccess.value = false
-        // Opcional: limpar e-mail e senha
-        // userResponseEmail = ""
-        // userResponsePassword = ""
+        _uiState.update {
+            it.copy(
+                userResponseEmail = "",
+                userResponsePassword = "",
+                isLoading = false,
+                loginSuccess = false
+            )
+        }
     }
 }
