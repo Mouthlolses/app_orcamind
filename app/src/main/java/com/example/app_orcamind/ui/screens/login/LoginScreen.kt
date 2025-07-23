@@ -59,6 +59,7 @@ fun LoginScreen(
     context: Context = LocalContext.current
 ) {
 
+
     val mediumPadding = dimensionResource(R.dimen.padding_medium)
 
     val oneTapClient = remember { Identity.getSignInClient(context) }

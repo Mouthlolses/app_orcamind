@@ -8,10 +8,19 @@ import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 class LoginViewModel : ViewModel() {
+
+    // Instância do Firebase Auth
+    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+
+    private val _uiState = MutableStateFlow(LoginUiState())
+    val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
+
 
     private val _userResponseEmail = MutableStateFlow("")
     val userResponseEmail: StateFlow<String> = _userResponseEmail
@@ -23,28 +32,28 @@ class LoginViewModel : ViewModel() {
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
-
     private val _loginErrorMessage = MutableStateFlow<String?>(null)
     val loginErrorMessage: StateFlow<String?> = _loginErrorMessage
     private val _loginSuccess = MutableStateFlow(false)
     val loginSuccess: StateFlow<Boolean> = _loginSuccess
 
-    // Instância do Firebase Auth
-    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
 
-    // --- Funções para atualizar e-mail e senha ---
+    //  Funções para atualizar e-mail e senha
     fun updateUserEmail(newEmail: String) {
-        _userResponseEmail.value = newEmail
+        _uiState.update { it.copy(userResponseEmail = newEmail) }
         // Limpa mensagens de erro ao digitar novamente
-        _loginErrorMessage.value = null
+        _uiState.update { it.copy(loginErrorMessage = null) }
     }
 
     fun updateUserPassword(newPassword: String) {
-        _userResponsePassword.value = newPassword
-        _loginErrorMessage.value = null
+        _uiState.update { it.copy(userResponsePassword = newPassword) }
+        _uiState.update { it.copy(loginErrorMessage = null) }
     }
 
-    fun performLogin(email: String = _userResponseEmail.value, password: String = _userResponsePassword.value) {
+    fun performLogin(
+        email: String = _userResponseEmail.value,
+        password: String = _userResponsePassword.value
+    ) {
         _isLoading.value = true // Indica que o login está em andamento
         _loginErrorMessage.value = null // Limpa qualquer mensagem de erro anterior
         _loginSuccess.value = false // Reseta o status de sucesso
@@ -61,13 +70,13 @@ class LoginViewModel : ViewModel() {
                 // Ele converte a Task assíncrona do Firebase (signInWithEmailAndPassword) em uma função suspend.
                 // Ela "espera" a conclusão da operação do Firebase de forma não-bloqueante.
 
-                auth.signInWithEmailAndPassword(email,password)
+                auth.signInWithEmailAndPassword(email, password)
                     .await()
                 // Se chegou aqui, o login foi bem-sucedido
                 _loginSuccess.value = true
-                Log.i("authFirebase","Login Success")
+                Log.i("authFirebase", "Login Success")
 
-            } catch (e: Exception){
+            } catch (e: Exception) {
                 _loginSuccess.value = false
                 _loginErrorMessage.value = when (e) {
                     is FirebaseAuthException -> { // Erros específicos do Firebase
@@ -80,14 +89,59 @@ class LoginViewModel : ViewModel() {
                             else -> "Erro de autenticação: ${e.message}"
                         }
                     }
+
                     else -> "Erro desconhecido ao fazer login: ${e.message}"
                 }
                 println("Erro no login: ${e.message}")
             } finally {
-              _isLoading.value = false
+                _isLoading.value = false
             }
         }
     }
+
+    fun newPerformClick() {
+        val email = _uiState.value.userResponseEmail
+        val password = _uiState.value.userResponsePassword
+
+        if (email.isBlank() || password.isBlank()) {
+            _uiState.update {
+                it.copy(
+                    isLoading = false,
+                    loginSuccess = false,
+                    loginErrorMessage = "Por favor, preencha todos os campos."
+                )
+            }
+            return
+        }
+
+        _uiState.update {
+            it.copy(
+                isLoading = true,
+                loginErrorMessage = null,
+            )
+        }
+
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            loginSuccess = true
+                        )
+                    }
+                } else {
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            loginSuccess = false,
+                            loginErrorMessage = task.exception?.message
+                        )
+                    }
+                }
+            }
+    }
+
 
     fun signInWithGoogle(idToken: String, onSuccess: () -> Unit, onFailure: (String) -> Unit) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
