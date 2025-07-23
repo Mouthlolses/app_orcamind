@@ -115,7 +115,6 @@ class RegisterViewModel : ViewModel() {
 
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
-
                 if (task.isSuccessful) {
                     _uiState.update {
                         it.copy(
@@ -123,6 +122,7 @@ class RegisterViewModel : ViewModel() {
                             createUserSuccess = true
                         )
                     }
+                    resetRegisterState()
                 } else {
                     _uiState.update {
                         it.copy(
@@ -131,7 +131,17 @@ class RegisterViewModel : ViewModel() {
                             createUserErrorMessage = task.exception?.message
                         )
                     }
+                    resetRegisterState()
                 }
             }
+    }
+
+    fun resetRegisterState() {
+        _uiState.update {
+            it.copy(
+                userResponseRegisterEmail = "",
+                userResponseRegisterPassword = ""
+            )
+        }
     }
 }
