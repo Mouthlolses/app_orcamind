@@ -7,7 +7,9 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -62,7 +64,7 @@ fun LoginScreen(
     val uiState by loginViewModel.uiState.collectAsState()
 
     val mediumPadding = dimensionResource(R.dimen.padding_medium)
-
+    val paddingHeight = dimensionResource(R.dimen.padding_height)
 
 
     val oneTapClient = remember { Identity.getSignInClient(context) }
@@ -115,7 +117,12 @@ fun LoginScreen(
             .statusBarsPadding()
             .verticalScroll(rememberScrollState())
             .safeDrawingPadding()
-            .padding(mediumPadding),
+            .padding(
+                top = paddingHeight,
+                start = mediumPadding,
+                end = mediumPadding,
+                bottom = mediumPadding
+            ),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -135,7 +142,7 @@ fun LoginScreen(
         if (uiState.isLoading) {
             CircularProgressIndicator(modifier = Modifier.padding(top = mediumPadding))
         }
-
+        Spacer(modifier = Modifier.height(12.dp))
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -144,19 +151,27 @@ fun LoginScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Button(
-                modifier = Modifier.fillMaxWidth(),
+                onClick = {
+                    loginViewModel.newPerformClick()
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(46.dp),
+                enabled = uiState.userResponseEmail.isNotBlank() && uiState.userResponsePassword.isNotBlank(),
                 colors = ButtonDefaults.buttonColors(
                     colorResource(R.color.blue_primary)
-                ),
-                onClick = { loginViewModel.newPerformClick() }
+                )
             ) {
                 Text(
                     text = stringResource(R.string.submit),
                     fontSize = 16.sp
                 )
             }
+            Spacer(modifier = Modifier.height(2.dp))
             Button(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(46.dp),
                 colors = ButtonDefaults.buttonColors(
                     colorResource(R.color.blue_primary)
                 ),

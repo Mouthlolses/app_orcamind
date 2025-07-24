@@ -91,11 +91,17 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = viewModel()) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Button(
-                modifier = Modifier.fillMaxWidth(),
+                onClick = { registerViewModel.newPerformClick() },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
+                enabled = uiState.userResponseRegisterEmail.isNotBlank() &&
+                        uiState.userResponseRegisterPassword.isNotBlank() &&
+                        uiState.userResponseRegisterName.isNotBlank()
+                ,
                 colors = ButtonDefaults.buttonColors(
                     colorResource(R.color.blue_primary)
-                ),
-                onClick = { registerViewModel.newPerformClick() }
+                )
             ) {
                 Text(
                     text = stringResource(R.string.registrar),

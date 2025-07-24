@@ -145,8 +145,9 @@ class RegisterViewModel : ViewModel() {
     fun resetRegisterState() {
         _uiState.update {
             it.copy(
+                userResponseRegisterName = "",
                 userResponseRegisterEmail = "",
-                userResponseRegisterPassword = ""
+                userResponseRegisterPassword = "",
             )
         }
     }
