@@ -10,6 +10,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.app_orcamind.ui.screens.home.HomeScreen
 import com.example.app_orcamind.ui.screens.login.LoginScreen
 import com.example.app_orcamind.ui.screens.register.RegisterScreen
 
@@ -35,6 +36,11 @@ fun AppNavigation() {
             "registerScreen"
         ) {
             RegisterScreen()
+        }
+        composable(
+            "homeScreen"
+        ){
+            HomeScreen()
         }
     }
 }
