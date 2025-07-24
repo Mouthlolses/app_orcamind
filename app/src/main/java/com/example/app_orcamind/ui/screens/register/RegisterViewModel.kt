@@ -38,6 +38,11 @@ class RegisterViewModel : ViewModel() {
     private val _createUserSuccess = MutableStateFlow(false)
 
 
+    fun onNameChange(newName: String) {
+        _uiState.update { it.copy(userResponseRegisterName = newName) }
+        _uiState.update { it.copy(createUserErrorMessage = null) }
+    }
+
     fun onEmailChange(newEmail: String) {
         _uiState.update { it.copy(userResponseRegisterEmail = newEmail) }
         // Limpa mensagens de erro ao digitar novamente
@@ -92,10 +97,11 @@ class RegisterViewModel : ViewModel() {
 
     //Utilizando essa logica para criar usuário
     fun newPerformClick() {
+        val name = _uiState.value.userResponseRegisterName
         val email = _uiState.value.userResponseRegisterEmail
         val password = _uiState.value.userResponseRegisterPassword
 
-        if (email.isBlank() || password.isBlank()) {
+        if (name.isBlank() || email.isBlank() || password.isBlank()) {
             _uiState.update {
                 it.copy(
                     isLoading = false,

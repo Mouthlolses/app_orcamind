@@ -60,8 +60,12 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = viewModel()) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         RegisterLayout(
+            responseName = uiState.userResponseRegisterName,
             responseEmail = uiState.userResponseRegisterEmail,
             responsePassword = uiState.userResponseRegisterPassword,
+            onUserNameChanged = {
+                registerViewModel.onNameChange(it)
+            },
             onUserEmailChanged = {
                 registerViewModel.onEmailChange(it)
             },
@@ -104,8 +108,10 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = viewModel()) {
 
 @Composable
 fun RegisterLayout(
+    responseName: String,
     responseEmail: String,
     responsePassword: String,
+    onUserNameChanged: (String) -> Unit,
     onUserEmailChanged: (String) -> Unit,
     onUserPasswordChanged: (String) -> Unit,
     onKeyboardDone: () -> Unit,
@@ -131,6 +137,29 @@ fun RegisterLayout(
                 style = typography.displaySmall
             )
             HorizontalDivider(Modifier, DividerDefaults.Thickness, DividerDefaults.color)
+            OutlinedTextField(
+                value = responseName,
+                singleLine = true,
+                shape = shapes.large,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp, bottom = 12.dp),
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = colorScheme.surface,
+                    unfocusedContainerColor = colorScheme.surface,
+                    disabledContainerColor = colorScheme.surface,
+                ),
+                onValueChange = onUserNameChanged,
+                placeholder = { Text(text = stringResource(R.string.name)) },
+                isError = responseInputWrong,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Done,
+                    keyboardType = KeyboardType.Email
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = { onKeyboardDone() }
+                )
+            )
             OutlinedTextField(
                 value = responseEmail,
                 singleLine = true,
@@ -160,7 +189,7 @@ fun RegisterLayout(
                 shape = shapes.large,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 12.dp),
+                    .padding(top = 12.dp, bottom = 12.dp),
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = colorScheme.surface,
                     unfocusedContainerColor = colorScheme.surface,
@@ -187,8 +216,10 @@ fun RegisterLayout(
 @Composable
 fun RegisterPreview() {
     RegisterLayout(
+        responseName = "",
         responseEmail = "",
         responsePassword = "",
+        onUserNameChanged = {},
         onUserEmailChanged = {},
         onUserPasswordChanged = {},
         onKeyboardDone = {},
