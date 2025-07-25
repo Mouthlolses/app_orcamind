@@ -159,7 +159,7 @@ fun LoginScreen(
                     .height(46.dp),
                 enabled = uiState.userResponseEmail.isNotBlank() && uiState.userResponsePassword.isNotBlank(),
                 colors = ButtonDefaults.buttonColors(
-                    colorResource(R.color.blue_primary)
+                    Color(0xFF6200EA)
                 )
             ) {
                 Text(
@@ -173,7 +173,7 @@ fun LoginScreen(
                     .fillMaxWidth()
                     .height(46.dp),
                 colors = ButtonDefaults.buttonColors(
-                    colorResource(R.color.blue_primary)
+                    Color(0xFF6200EA)
                 ),
                 onClick = { navController.navigate("registerScreen") }
             ) {

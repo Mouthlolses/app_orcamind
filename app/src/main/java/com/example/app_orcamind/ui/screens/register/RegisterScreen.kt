@@ -100,7 +100,7 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = viewModel()) {
                         uiState.userResponseRegisterName.isNotBlank()
                 ,
                 colors = ButtonDefaults.buttonColors(
-                    colorResource(R.color.blue_primary)
+                    Color(0xFF6200EA)
                 )
             ) {
                 Text(
