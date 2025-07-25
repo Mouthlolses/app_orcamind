@@ -183,7 +183,7 @@ fun LoginScreen(
                 )
             }
             Text(
-                text = "Ou"
+                text = stringResource(R.string.ou)
             )
             GoogleSignInButton(
                 text = "Entrar com Google",
@@ -231,7 +231,7 @@ fun LoginLayout(
         ) {
             HorizontalDivider(Modifier, DividerDefaults.Thickness, DividerDefaults.color)
             Text(
-                text = "Bem Vindo",
+                text = stringResource(R.string.welcome),
                 style = typography.displayMedium
             )
             HorizontalDivider(Modifier, DividerDefaults.Thickness, DividerDefaults.color)

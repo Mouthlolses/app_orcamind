@@ -16,5 +16,4 @@ class UserRepository {
             .set(user)
             .await()
     }
-
 }

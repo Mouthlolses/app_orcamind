@@ -2,6 +2,7 @@
 <resources>
     <dimen name="padding_small">8dp</dimen>
     <dimen name="padding_medium">14dp</dimen>
+    <dimen name="padding_cardhome">18dp</dimen>
     <dimen name="padding_height">32dp</dimen>
     <dimen name="max_height">500dp</dimen>
 </resources>
