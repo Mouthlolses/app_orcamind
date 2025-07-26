@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.app_orcamind.ui.components.ConfigureCard
 import com.example.app_orcamind.ui.components.HomeCard
 
 
@@ -111,6 +112,9 @@ fun HomeScreenLayout() {
             ) {
                 item {
                     HomeCard()
+                }
+                item {
+                    ConfigureCard(onClick = {})
                 }
             }
         }

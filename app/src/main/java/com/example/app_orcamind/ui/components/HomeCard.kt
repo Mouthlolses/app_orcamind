@@ -3,13 +3,19 @@ package com.example.app_orcamind.ui.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
+import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -57,10 +63,37 @@ fun HomeCard() {
             Text(
                 text = stringResource(R.string.resume),
                 modifier = Modifier
-                    .padding(top = 12.dp),
+                    .padding(top = 4.dp, bottom = 16.dp),
                 textAlign = TextAlign.Center,
                 style = typography.titleMedium,
             )
+            Row(
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text("Receitas", style = typography.labelLarge)
+                    Text("R$ 2.500", style = typography.bodyLarge, color = Color(0xFF388E3C)) // verde
+                }
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text("Despesas", style = typography.labelLarge)
+                    Text("R$ 1.800", style = typography.bodyLarge, color = Color(0xFFD32F2F)) // vermelho
+                }
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text("Saldo", style = typography.labelLarge)
+                    Text("R$ 700", style = typography.bodyLarge, color = Color(0xFF1976D2)) // azul
+                }
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+            Text("Meta de economia: R$ 1.000", style = typography.bodyMedium)
+            LinearProgressIndicator(
+            progress = { 0.7f },
+            modifier = Modifier.fillMaxWidth(),
+            color = ProgressIndicatorDefaults.linearColor,
+            trackColor = ProgressIndicatorDefaults.linearTrackColor,
+            strokeCap = ProgressIndicatorDefaults.LinearStrokeCap,
+            )
+            Text("Você já economizou R$ 700 este mês!", style = typography.labelSmall)
         }
     }
 }
