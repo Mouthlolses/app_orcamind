@@ -1,10 +1,5 @@
 package com.example.app_orcamind.navigation
 
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
@@ -39,8 +34,13 @@ fun AppNavigation() {
         }
         composable(
             "homeScreen"
-        ){
+        ) {
             HomeScreen()
+        }
+        composable(
+            "homeSummyForm"
+        ) {
+
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.example.app_orcamind.ui.components
+package com.example.app_orcamind.ui.screens.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
