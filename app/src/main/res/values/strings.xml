@@ -10,5 +10,6 @@
     <string name="criarConta">Criar Conta</string>
     <string name="email">Email</string>
     <string name="name">Nome</string>
-    <string name="password">Password</string>
+    <string name="password">Senha</string>
+    <string name="confirmPassword">Confirmar Senha</string>
 </resources>

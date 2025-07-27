@@ -54,6 +54,11 @@ class RegisterViewModel : ViewModel() {
         _uiState.update { it.copy(createUserErrorMessage = null) }
     }
 
+    fun onPasswordCurrentChange(newCurrentPassword: String) {
+        _uiState.update { it.copy(userResponseRegisterPasswordCurrent = newCurrentPassword) }
+        _uiState.update { it.copy(createUserErrorMessage = null) }
+    }
+
     fun performCreateUser() {
         _isLoading.value = true
         _createUserErrorMessage.value = null
@@ -100,6 +105,7 @@ class RegisterViewModel : ViewModel() {
         val name = _uiState.value.userResponseRegisterName
         val email = _uiState.value.userResponseRegisterEmail
         val password = _uiState.value.userResponseRegisterPassword
+        val passwordCurrent = _uiState.value.userResponseRegisterPasswordCurrent
 
         if (name.isBlank() || email.isBlank() || password.isBlank()) {
             _uiState.update {
@@ -108,38 +114,51 @@ class RegisterViewModel : ViewModel() {
                     createUserErrorMessage = "Por favor, preencha todos os campos."
                 )
             }
-            return
-        }
-
-        _uiState.update {
-            it.copy(
-                isLoading = true,
-                createUserErrorMessage = null,
-                createUserSuccess = false
-            )
-        }
-
-        auth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            createUserSuccess = true
-                        )
-                    }
-                    resetRegisterState()
-                } else {
-                    _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            createUserSuccess = false,
-                            createUserErrorMessage = task.exception?.message
-                        )
-                    }
-                    resetRegisterState()
-                }
+        } else if (password != passwordCurrent) {
+            _uiState.update {
+                it.copy(
+                    isLoading = false,
+                    createUserErrorMessage = "As senhas não coincidem."
+                )
             }
+        } else if (password.length < 6) {
+            _uiState.update {
+                it.copy(
+                    isLoading = false,
+                    createUserErrorMessage = "A senha deve ter no mínimo 6 caracteres"
+                )
+            }
+        } else {
+
+            _uiState.update {
+                it.copy(
+                    isLoading = true,
+                    createUserErrorMessage = null,
+                    createUserSuccess = false
+                )
+            }
+
+            auth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                createUserSuccess = true
+                            )
+                        }
+                        resetRegisterState()
+                    } else {
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                createUserSuccess = false,
+                            )
+                        }
+                        resetRegisterState()
+                    }
+                }
+        }
     }
 
     fun resetRegisterState() {
@@ -148,6 +167,7 @@ class RegisterViewModel : ViewModel() {
                 userResponseRegisterName = "",
                 userResponseRegisterEmail = "",
                 userResponseRegisterPassword = "",
+                userResponseRegisterPasswordCurrent = ""
             )
         }
     }

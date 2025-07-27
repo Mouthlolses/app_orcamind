@@ -31,7 +31,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -48,6 +47,7 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = viewModel()) {
     val uiState by registerViewModel.uiState.collectAsState()
 
     val mediumPadding = dimensionResource(R.dimen.padding_medium)
+    val paddingHeight = dimensionResource(R.dimen.padding_height)
 
 
     Column(
@@ -55,7 +55,11 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = viewModel()) {
             .statusBarsPadding()
             .verticalScroll(rememberScrollState())
             .safeDrawingPadding()
-            .padding(mediumPadding),
+            .padding(
+                top = paddingHeight,
+                start = mediumPadding,
+                end = mediumPadding
+            ),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -63,6 +67,7 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = viewModel()) {
             responseName = uiState.userResponseRegisterName,
             responseEmail = uiState.userResponseRegisterEmail,
             responsePassword = uiState.userResponseRegisterPassword,
+            responsePasswordCurrent = uiState.userResponseRegisterPasswordCurrent,
             onUserNameChanged = {
                 registerViewModel.onNameChange(it)
             },
@@ -72,12 +77,19 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = viewModel()) {
             onUserPasswordChanged = {
                 registerViewModel.onPasswordChange(it)
             },
+            onUserPasswordCurrentChanged = {
+                registerViewModel.onPasswordCurrentChange(it)
+            },
             onKeyboardDone = { registerViewModel.newPerformClick() },
             responseInputWrong = uiState.createUserErrorMessage != null
         )
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(24.dp))
         uiState.createUserErrorMessage?.let {
-            Text(text = it, color = Color.Red)
+            Text(
+                text = it,
+                fontSize = 16.sp,
+                color = Color.Red
+            )
         }
         Spacer(modifier = Modifier.height(24.dp))
         if (uiState.isLoading) {
@@ -117,9 +129,11 @@ fun RegisterLayout(
     responseName: String,
     responseEmail: String,
     responsePassword: String,
+    responsePasswordCurrent: String,
     onUserNameChanged: (String) -> Unit,
     onUserEmailChanged: (String) -> Unit,
     onUserPasswordChanged: (String) -> Unit,
+    onUserPasswordCurrentChanged: (String) -> Unit,
     onKeyboardDone: () -> Unit,
     responseInputWrong: Boolean
 ) {
@@ -212,6 +226,29 @@ fun RegisterLayout(
                     onDone = { onKeyboardDone() }
                 )
             )
+            OutlinedTextField(
+                value = responsePasswordCurrent,
+                singleLine = true,
+                shape = shapes.large,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp, bottom = 12.dp),
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = colorScheme.surface,
+                    unfocusedContainerColor = colorScheme.surface,
+                    disabledContainerColor = colorScheme.surface
+                ),
+                onValueChange = onUserPasswordCurrentChanged,
+                placeholder = { Text(text = stringResource(R.string.confirmPassword)) },
+                isError = responseInputWrong,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Done,
+                    keyboardType = KeyboardType.Password
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = { onKeyboardDone() }
+                )
+            )
             HorizontalDivider(Modifier, DividerDefaults.Thickness, DividerDefaults.color)
         }
     }
@@ -225,9 +262,11 @@ fun RegisterPreview() {
         responseName = "",
         responseEmail = "",
         responsePassword = "",
+        responsePasswordCurrent = "",
         onUserNameChanged = {},
         onUserEmailChanged = {},
         onUserPasswordChanged = {},
+        onUserPasswordCurrentChanged = {},
         onKeyboardDone = {},
         responseInputWrong = false
     )
