@@ -50,55 +50,6 @@ class LoginViewModel : ViewModel() {
         _uiState.update { it.copy(loginErrorMessage = null) }
     }
 
-    fun performLogin(
-        email: String = _userResponseEmail.value,
-        password: String = _userResponsePassword.value
-    ) {
-        _isLoading.value = true // Indica que o login está em andamento
-        _loginErrorMessage.value = null // Limpa qualquer mensagem de erro anterior
-        _loginSuccess.value = false // Reseta o status de sucesso
-
-        if (_userResponseEmail.value.isBlank() || _userResponsePassword.value.isBlank()) {
-            _loginErrorMessage.value = "Por favor, preencha todos os campos."
-            _isLoading.value = false
-            return
-        }
-
-        viewModelScope.launch {
-            try {
-                // A chamada .await() é a mágica das corrotinas com Firebase KTX.
-                // Ele converte a Task assíncrona do Firebase (signInWithEmailAndPassword) em uma função suspend.
-                // Ela "espera" a conclusão da operação do Firebase de forma não-bloqueante.
-
-                auth.signInWithEmailAndPassword(email, password)
-                    .await()
-                // Se chegou aqui, o login foi bem-sucedido
-                _loginSuccess.value = true
-                Log.i("authFirebase", "Login Success")
-
-            } catch (e: Exception) {
-                _loginSuccess.value = false
-                _loginErrorMessage.value = when (e) {
-                    is FirebaseAuthException -> { // Erros específicos do Firebase
-                        when (e.errorCode) {
-                            "ERROR_INVALID_EMAIL" -> "O e-mail digitado é inválido."
-                            "ERROR_WRONG_PASSWORD" -> "Senha incorreta."
-                            "ERROR_USER_NOT_FOUND" -> "Usuário não encontrado."
-                            "ERROR_USER_DISABLED" -> "Esta conta foi desativada."
-                            // Adicione mais casos conforme necessário para mensagens mais amigáveis
-                            else -> "Erro de autenticação: ${e.message}"
-                        }
-                    }
-
-                    else -> "Erro desconhecido ao fazer login: ${e.message}"
-                }
-                println("Erro no login: ${e.message}")
-            } finally {
-                _isLoading.value = false
-            }
-        }
-    }
-
     fun newPerformClick() {
         val email = _uiState.value.userResponseEmail
         val password = _uiState.value.userResponsePassword
@@ -138,7 +89,7 @@ class LoginViewModel : ViewModel() {
                         it.copy(
                             isLoading = false,
                             loginSuccess = false,
-                            loginErrorMessage = task.exception?.message
+                            loginErrorMessage = "Login ou senha incorretos"
                         )
                     }
                     resetLoginState()

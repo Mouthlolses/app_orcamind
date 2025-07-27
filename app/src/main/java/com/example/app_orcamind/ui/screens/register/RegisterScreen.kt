@@ -109,7 +109,8 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = viewModel()) {
                     .height(48.dp),
                 enabled = uiState.userResponseRegisterEmail.isNotBlank() &&
                         uiState.userResponseRegisterPassword.isNotBlank() &&
-                        uiState.userResponseRegisterName.isNotBlank()
+                        uiState.userResponseRegisterName.isNotBlank() &&
+                        uiState.userResponseRegisterPasswordCurrent.isNotBlank()
                 ,
                 colors = ButtonDefaults.buttonColors(
                     Color(0xFF6200EA)

@@ -59,47 +59,6 @@ class RegisterViewModel : ViewModel() {
         _uiState.update { it.copy(createUserErrorMessage = null) }
     }
 
-    fun performCreateUser() {
-        _isLoading.value = true
-        _createUserErrorMessage.value = null
-        _createUserSuccess.value = false
-
-        if (_userResponseRegisterEmail.value.isBlank() || _userResponseRegisterPassword.value.isBlank()) {
-            _createUserErrorMessage.value = "Por favor, preencha todos os campos"
-            _isLoading.value = false
-            return
-        }
-        viewModelScope.launch {
-            try {
-                auth.createUserWithEmailAndPassword(
-                    _userResponseRegisterEmail.value,
-                    _userResponseRegisterPassword.value
-                )
-                    .await()
-                _createUserSuccess.value = true
-
-                Log.i("createFirebase", "Create User Success")
-
-            } catch (e: FirebaseAuthException) {
-                _createUserSuccess.value = false
-                _createUserErrorMessage.value = when (e.errorCode) {
-                    "ERROR_INVALID_EMAIL" -> "O e-mail digitado é inválido."
-                    "ERROR_EMAIL_ALREADY_IN_USE" -> "Este e-mail já está em uso."
-                    "ERROR_WEAK_PASSWORD" -> "Senha muito fraca."
-                    // Adicione mais casos conforme necessário para mensagens mais amigáveis
-                    else -> "Erro de cadastro: ${e.message}"
-                }
-            } catch (e: Exception) {
-                // Erro genérico
-                _createUserSuccess.value = false
-                _createUserErrorMessage.value = "Erro desconhecido ao se registrar: ${e.message}"
-            } finally {
-                _isLoading.value = false
-            }
-        }
-    }
-
-
     //Utilizando essa logica para criar usuário
     fun newPerformClick() {
         val name = _uiState.value.userResponseRegisterName
@@ -107,14 +66,7 @@ class RegisterViewModel : ViewModel() {
         val password = _uiState.value.userResponseRegisterPassword
         val passwordCurrent = _uiState.value.userResponseRegisterPasswordCurrent
 
-        if (name.isBlank() || email.isBlank() || password.isBlank()) {
-            _uiState.update {
-                it.copy(
-                    isLoading = false,
-                    createUserErrorMessage = "Por favor, preencha todos os campos."
-                )
-            }
-        } else if (password != passwordCurrent) {
+        if (password != passwordCurrent) {
             _uiState.update {
                 it.copy(
                     isLoading = false,

@@ -136,7 +136,13 @@ fun LoginScreen(
             onUserPasswordChanged = { newPassword -> loginViewModel.updateUserPassword(newPassword) }
         )
         uiState.loginErrorMessage?.let {
-            Text(text = it, color = Color.Red)
+            Text(
+                text = it,
+                fontSize = 16.sp,
+                modifier = Modifier
+                    .padding(top = mediumPadding),
+                color = Color.Red
+            )
         }
         if (uiState.isLoading) {
             CircularProgressIndicator(modifier = Modifier.padding(top = mediumPadding))
