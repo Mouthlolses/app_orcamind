@@ -144,7 +144,7 @@ class RegisterViewModel : ViewModel() {
                         _uiState.update {
                             it.copy(
                                 isLoading = false,
-                                createUserSuccess = true
+                                createUserSuccess = true,
                             )
                         }
                         resetRegisterState()
@@ -153,6 +153,7 @@ class RegisterViewModel : ViewModel() {
                             it.copy(
                                 isLoading = false,
                                 createUserSuccess = false,
+                                createUserErrorMessage = "Erro ao criar conta, tente novamente"
                             )
                         }
                         resetRegisterState()
