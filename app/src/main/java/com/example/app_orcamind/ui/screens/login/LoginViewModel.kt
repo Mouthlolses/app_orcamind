@@ -6,7 +6,9 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.GoogleAuthProvider
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -21,6 +23,8 @@ class LoginViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
 
+    private val _navigateToHome = MutableSharedFlow<Unit>()
+    val navigateToHome: SharedFlow<Unit> = _navigateToHome
 
     private val _userResponseEmail = MutableStateFlow("")
     val userResponseEmail: StateFlow<String> = _userResponseEmail
@@ -76,19 +80,14 @@ class LoginViewModel : ViewModel() {
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Log.i("Login", "Sucesso")
-                    _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            loginSuccess = true
-                        )
+                    viewModelScope.launch {
+                        _navigateToHome.emit(Unit)
                     }
-                    resetLoginState()
                 } else {
                     _uiState.update {
                         Log.i("Login", "Falha no login")
                         it.copy(
                             isLoading = false,
-                            loginSuccess = false,
                             loginErrorMessage = "Login ou senha incorretos"
                         )
                     }

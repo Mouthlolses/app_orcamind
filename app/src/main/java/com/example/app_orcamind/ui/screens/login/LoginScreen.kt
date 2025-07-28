@@ -31,6 +31,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -102,14 +103,14 @@ fun LoginScreen(
         }
     }
 
-    // Se login foi bem-sucedido, navegar
-//    LaunchedEffect(loginSuccess) {
-//        if (loginSuccess) {
-//            navController.navigate("homeScreen") {
-//                popUpTo("loginScreen") { inclusive = true }
-//            }
-//        }
-//    }
+
+    LaunchedEffect(Unit) {
+        loginViewModel.navigateToHome.collect {
+            navController.navigate("homeScreen") {
+                popUpTo("loginScreen") { inclusive = true }
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
