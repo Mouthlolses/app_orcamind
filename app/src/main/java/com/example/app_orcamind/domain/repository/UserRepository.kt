@@ -1,6 +1,6 @@
 package com.example.app_orcamind.domain.repository
 
-import com.example.app_orcamind.model.User
+import com.example.app_orcamind.data.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase

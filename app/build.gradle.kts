@@ -5,6 +5,7 @@ plugins {
     id("com.google.gms.google-services")
     id("kotlin-parcelize")
     id("com.google.devtools.ksp")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -44,6 +45,9 @@ android {
 
 dependencies {
 
+    implementation(libs.hilt.android)
+    implementation(libs.androidx.hilt.navigation.compose)
+    ksp(libs.hilt.android.compiler)
     implementation(libs.accompanist.navigation.animation)
     implementation(libs.play.services.auth.v2100)
     implementation(libs.androidx.navigation.compose)

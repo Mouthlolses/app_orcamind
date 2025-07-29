@@ -3,7 +3,7 @@ package com.example.app_orcamind.data.daoUser
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
-import com.example.app_orcamind.model.User
+import com.example.app_orcamind.data.model.User
 
 
 @Dao

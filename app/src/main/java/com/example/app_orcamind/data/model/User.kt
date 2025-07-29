@@ -1,4 +1,4 @@
-package com.example.app_orcamind.model
+package com.example.app_orcamind.data.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

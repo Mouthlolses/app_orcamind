@@ -1,18 +1,21 @@
 package com.example.app_orcamind.ui.screens.register
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.app_orcamind.data.repository.UserRegistration
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthException
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
 
-class RegisterViewModel : ViewModel() {
+@HiltViewModel
+class RegisterViewModel @Inject constructor(
+    private val userRegistration: UserRegistration
+) : ViewModel() {
 
 
     //Padrão encapsulamento de estado
@@ -73,14 +76,20 @@ class RegisterViewModel : ViewModel() {
                     createUserErrorMessage = "As senhas não coincidem."
                 )
             }
-        } else if (password.length < 6) {
+            return
+        }
+
+        if (password.length < 6) {
             _uiState.update {
                 it.copy(
                     isLoading = false,
                     createUserErrorMessage = "A senha deve ter no mínimo 6 caracteres"
                 )
             }
-        } else {
+            return
+        }
+
+        viewModelScope.launch {
 
             _uiState.update {
                 it.copy(
@@ -90,27 +99,25 @@ class RegisterViewModel : ViewModel() {
                 )
             }
 
-            auth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        _uiState.update {
-                            it.copy(
-                                isLoading = false,
-                                createUserSuccess = true,
-                            )
-                        }
-                        resetRegisterState()
-                    } else {
-                        _uiState.update {
-                            it.copy(
-                                isLoading = false,
-                                createUserSuccess = false,
-                                createUserErrorMessage = "Erro ao criar conta, tente novamente"
-                            )
-                        }
-                        resetRegisterState()
-                    }
+            val result = userRegistration.registerUser(email,password)
+
+            if (result.isSuccess) {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        createUserSuccess = true
+                    )
                 }
+                resetRegisterState()
+            } else {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        createUserSuccess = false,
+                        createUserErrorMessage = result.exceptionOrNull()?.message ?: "Erro ao criar conta"
+                    )
+                }
+            }
         }
     }
 
