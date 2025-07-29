@@ -9,4 +9,8 @@ class UserRegistration @Inject constructor(
     suspend fun registerUser(email: String, password: String): Result<Unit> {
         return dataSource.createUser(email, password)
     }
+
+    suspend fun authUser(email: String, password: String): Result<Unit> {
+        return dataSource.authUser(email, password)
+    }
 }

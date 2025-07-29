@@ -3,9 +3,10 @@ package com.example.app_orcamind.ui.screens.login
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.app_orcamind.data.repository.UserRegistration
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.GoogleAuthProvider
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -13,33 +14,17 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
 
-class LoginViewModel : ViewModel() {
-
-    // Instância do Firebase Auth
-    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
-
+@HiltViewModel
+class LoginViewModel @Inject constructor(
+    private val userRepository: UserRegistration
+) : ViewModel() {
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
 
     private val _navigateToHome = MutableSharedFlow<Unit>()
     val navigateToHome: SharedFlow<Unit> = _navigateToHome
-
-    private val _userResponseEmail = MutableStateFlow("")
-    val userResponseEmail: StateFlow<String> = _userResponseEmail
-
-    private val _userResponsePassword = MutableStateFlow("")
-    val userResponsePassword: StateFlow<String> = _userResponsePassword
-
-    // --- Variáveis de estado para o processo de login ---
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading
-
-    private val _loginErrorMessage = MutableStateFlow<String?>(null)
-    val loginErrorMessage: StateFlow<String?> = _loginErrorMessage
-    private val _loginSuccess = MutableStateFlow(false)
-    val loginSuccess: StateFlow<Boolean> = _loginSuccess
 
 
     //  Funções para atualizar e-mail e senha
@@ -69,31 +54,31 @@ class LoginViewModel : ViewModel() {
             return
         }
 
-        _uiState.update {
-            it.copy(
-                isLoading = true,
-                loginErrorMessage = null,
-            )
-        }
+        viewModelScope.launch {
 
-        auth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Log.i("Login", "Sucesso")
-                    viewModelScope.launch {
-                        _navigateToHome.emit(Unit)
-                    }
-                } else {
-                    _uiState.update {
-                        Log.i("Login", "Falha no login")
-                        it.copy(
-                            isLoading = false,
-                            loginErrorMessage = "Login ou senha incorretos"
-                        )
-                    }
-                    resetLoginState()
-                }
+            _uiState.update {
+                it.copy(
+                    isLoading = true,
+                    loginErrorMessage = null,
+                )
             }
+
+            val result = userRepository.authUser(email, password)
+
+            if (result.isSuccess) {
+                Log.i("Login", "Sucesso")
+                _navigateToHome.emit(Unit)
+            } else {
+                _uiState.update {
+                    Log.i("Login", "Falha no login")
+                    it.copy(
+                        isLoading = false,
+                        loginErrorMessage = "Login ou senha incorretos"
+                    )
+                }
+                resetLoginState()
+            }
+        }
     }
 
 

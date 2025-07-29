@@ -15,4 +15,13 @@ class FirebaseAuthDataSource @Inject constructor(
             Result.failure(e)
         }
     }
+
+    suspend fun authUser(email: String, password: String): Result<Unit> {
+        return try {
+            auth.signInWithEmailAndPassword(email,password).await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

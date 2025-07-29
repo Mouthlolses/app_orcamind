@@ -47,7 +47,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.app_orcamind.R
 import com.example.app_orcamind.ui.components.GoogleSignInButton
@@ -57,7 +57,7 @@ import com.google.android.gms.auth.api.identity.Identity
 
 @Composable
 fun LoginScreen(
-    loginViewModel: LoginViewModel = viewModel(),
+    loginViewModel: LoginViewModel = hiltViewModel(),
     navController: NavHostController,
     context: Context = LocalContext.current
 ) {

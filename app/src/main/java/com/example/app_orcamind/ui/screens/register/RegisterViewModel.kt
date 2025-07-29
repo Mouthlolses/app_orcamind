@@ -17,28 +17,9 @@ class RegisterViewModel @Inject constructor(
     private val userRegistration: UserRegistration
 ) : ViewModel() {
 
-
     //Padrão encapsulamento de estado
     private val _uiState = MutableStateFlow(RegisterUiState())
     val uiState: StateFlow<RegisterUiState> = _uiState.asStateFlow()
-
-
-    // Instância do Firebase Auth
-    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
-
-
-    private val _userResponseRegisterEmail = MutableStateFlow("")
-    val userResponseRegisterEmail: StateFlow<String> = _userResponseRegisterEmail
-
-    private val _userResponseRegisterPassword = MutableStateFlow("")
-    val userResponseRegisterPassword: StateFlow<String> = _userResponseRegisterPassword
-
-    private val _isLoading = MutableStateFlow(false)
-
-    private val _createUserErrorMessage = MutableStateFlow<String?>(null)
-    val createUserErrorMessage: StateFlow<String?> = _createUserErrorMessage
-
-    private val _createUserSuccess = MutableStateFlow(false)
 
 
     fun onNameChange(newName: String) {
