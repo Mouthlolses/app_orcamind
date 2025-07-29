@@ -5,9 +5,11 @@ import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -24,6 +26,8 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
@@ -34,15 +38,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -64,7 +74,7 @@ fun LoginScreen(
     val uiState by loginViewModel.uiState.collectAsState()
 
     val mediumPadding = dimensionResource(R.dimen.padding_medium)
-    val paddingHeight = dimensionResource(R.dimen.padding_height)
+    val paddingHeight = dimensionResource(R.dimen.padding_top_height)
 
 
     val oneTapClient = remember { Identity.getSignInClient(context) }
@@ -114,14 +124,14 @@ fun LoginScreen(
 
     Column(
         modifier = Modifier
+            .fillMaxSize()
             .statusBarsPadding()
             .verticalScroll(rememberScrollState())
             .safeDrawingPadding()
             .padding(
-                top = paddingHeight,
                 start = mediumPadding,
                 end = mediumPadding,
-                bottom = mediumPadding
+                bottom = paddingHeight
             ),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -224,6 +234,7 @@ fun LoginLayout(
     modifier: Modifier = Modifier
 ) {
     val mediumPadding = dimensionResource(R.dimen.padding_medium)
+    var passwordVisible by remember { mutableStateOf(false) }
 
     Card(
         modifier = modifier,
@@ -289,7 +300,16 @@ fun LoginLayout(
                 ),
                 keyboardActions = KeyboardActions(
                     onDone = { onKeyboardDone() }
-                )
+                ),
+                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                trailingIcon = {
+                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                        Icon(
+                            painter = painterResource(id = if (passwordVisible) R.drawable.ic_action_visibility else R.drawable.ic_action_visibility_off),
+                            contentDescription = if (passwordVisible) "Ocultar senha" else "Mostrar senha"
+                        )
+                    }
+                }
             )
         }
     }
