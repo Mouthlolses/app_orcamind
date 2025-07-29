@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="padding_small">8dp</dimen>
-    <dimen name="padding_medium">14dp</dimen>
+    <dimen name="padding_medium">12dp</dimen>
     <dimen name="padding_cardhome">16dp</dimen>
     <dimen name="padding_height">32dp</dimen>
     <dimen name="padding_top_height">64dp</dimen>

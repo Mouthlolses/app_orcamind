@@ -124,14 +124,13 @@ fun LoginScreen(
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
             .statusBarsPadding()
             .verticalScroll(rememberScrollState())
             .safeDrawingPadding()
             .padding(
+                top = paddingHeight,
                 start = mediumPadding,
                 end = mediumPadding,
-                bottom = paddingHeight
             ),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
