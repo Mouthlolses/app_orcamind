@@ -26,11 +26,8 @@ class LoginViewModel @Inject constructor(
     private val _navigateToHome = MutableSharedFlow<Unit>()
     val navigateToHome: SharedFlow<Unit> = _navigateToHome
 
-
-    //  Funções para atualizar e-mail e senha
     fun updateUserEmail(newEmail: String) {
         _uiState.update { it.copy(userResponseEmail = newEmail) }
-        // Limpa mensagens de erro ao digitar novamente
         _uiState.update { it.copy(loginErrorMessage = null) }
     }
 
