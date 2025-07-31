@@ -237,9 +237,10 @@ fun LoginLayout(
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
     ) {
         Column(
+            modifier = Modifier
+                .padding(mediumPadding),
             verticalArrangement = Arrangement.spacedBy(mediumPadding),
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(mediumPadding)
         ) {
             HorizontalDivider(Modifier, DividerDefaults.Thickness, DividerDefaults.color)
             Text(

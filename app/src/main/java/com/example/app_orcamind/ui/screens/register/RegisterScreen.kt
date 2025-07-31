@@ -21,12 +21,10 @@ import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -177,17 +175,12 @@ fun RegisterLayout(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 12.dp, bottom = 12.dp),
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = colorScheme.surface,
-                    unfocusedContainerColor = colorScheme.surface,
-                    disabledContainerColor = colorScheme.surface,
-                ),
                 onValueChange = onUserNameChanged,
-                placeholder = { Text(text = stringResource(R.string.name)) },
+                label = { Text(text = stringResource(R.string.name)) },
                 isError = responseInputWrong,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Done,
-                    keyboardType = KeyboardType.Email
+                    keyboardType = KeyboardType.Text
                 ),
                 keyboardActions = KeyboardActions(
                     onDone = { onKeyboardDone() }
@@ -200,13 +193,8 @@ fun RegisterLayout(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 12.dp, bottom = 12.dp),
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = colorScheme.surface,
-                    unfocusedContainerColor = colorScheme.surface,
-                    disabledContainerColor = colorScheme.surface,
-                ),
                 onValueChange = onUserEmailChanged,
-                placeholder = { Text(text = stringResource(R.string.email)) },
+                label = { Text(text = stringResource(R.string.email)) },
                 isError = responseInputWrong,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Done,
@@ -223,13 +211,8 @@ fun RegisterLayout(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 12.dp, bottom = 12.dp),
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = colorScheme.surface,
-                    unfocusedContainerColor = colorScheme.surface,
-                    disabledContainerColor = colorScheme.surface
-                ),
                 onValueChange = onUserPasswordChanged,
-                placeholder = { Text(text = stringResource(R.string.password)) },
+                label = { Text(text = stringResource(R.string.password)) },
                 isError = responseInputWrong,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Done,
@@ -255,13 +238,8 @@ fun RegisterLayout(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 12.dp, bottom = 12.dp),
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = colorScheme.surface,
-                    unfocusedContainerColor = colorScheme.surface,
-                    disabledContainerColor = colorScheme.surface
-                ),
                 onValueChange = onUserPasswordCurrentChanged,
-                placeholder = { Text(text = stringResource(R.string.confirmPassword)) },
+                label = { Text(text = stringResource(R.string.confirmPassword)) },
                 isError = responseInputWrong,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Done,

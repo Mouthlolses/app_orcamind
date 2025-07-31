@@ -11,9 +11,11 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -21,22 +23,39 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.app_orcamind.ui.components.ConfigureCard
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    homeScreenViewModel: HomeScreenViewModel = viewModel()
+) {
+    val uiState by homeScreenViewModel.uiState.collectAsState()
+
     Column(
         modifier = Modifier
     ) {
-        HomeScreenLayout()
+        HomeScreenLayout( 
+            revenue = uiState.revenue,
+            expense = uiState.expense,
+            balance = uiState.balance,
+            revenueValue = {homeScreenViewModel.onRevenueChanged(it)},
+            expenseValue = {homeScreenViewModel.onExpenseChanged(it)},
+            balanceValue = {homeScreenViewModel.onBalanceChanged(it)}
+        )
     }
 
 }
@@ -44,8 +63,60 @@ fun HomeScreen() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreenLayout() {
+fun HomeScreenLayout(
+    revenue: String,
+    expense: String,
+    balance: String,
+    revenueValue: (String) -> Unit,
+    expenseValue: (String) -> Unit,
+    balanceValue: (String) -> Unit
+) {
     val scrollState = rememberLazyListState()
+    var showDialog by remember { mutableStateOf(false) }
+
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = {
+                Text("Infome seus dados financeiros")
+            },
+            text = @Composable {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    OutlinedTextField(
+                        value = revenue,
+                        onValueChange = revenueValue,
+                        label = { Text("Receita") },
+                        singleLine = true
+                    )
+                    OutlinedTextField(
+                        value = expense,
+                        onValueChange = expenseValue,
+                        label = { Text("Despesa") },
+                        singleLine = true
+                    )
+                    OutlinedTextField(
+                        value = balance,
+                        onValueChange = balanceValue,
+                        label = { Text("Saldo") },
+                        singleLine = true
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showDialog = false }) {
+                    Text("OK")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = {showDialog = false}) {
+                    Text(text = "FECHAR")
+                }
+            }
+        )
+    }
 
     Box(
         modifier = Modifier
@@ -87,7 +158,7 @@ fun HomeScreenLayout() {
                                                 )
                                             )
                                         )
-                                        .padding( horizontal = 10.dp, vertical = 4.dp),
+                                        .padding(horizontal = 10.dp, vertical = 4.dp),
                                     color = Color.White,
                                     style = typography.titleSmall,
                                 )
@@ -112,7 +183,9 @@ fun HomeScreenLayout() {
                     HomeCard()
                 }
                 item {
-                    ConfigureCard(onClick = {})
+                    ConfigureCard(onClick = {
+                        showDialog = true
+                    })
                 }
             }
         }
