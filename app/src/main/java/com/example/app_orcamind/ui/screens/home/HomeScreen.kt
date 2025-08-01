@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -37,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.app_orcamind.ui.components.ConfigureCard
+import com.google.android.gms.internal.measurement.zziy
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -49,13 +49,15 @@ fun HomeScreen(
     Column(
         modifier = Modifier
     ) {
-        HomeScreenLayout( 
+        HomeScreenLayout(
+            userName = uiState.userName,
             revenue = uiState.revenue,
             expense = uiState.expense,
+            economy = uiState.economy,
             balance = uiState.balance,
-            revenueValue = {homeScreenViewModel.onRevenueChanged(it)},
-            expenseValue = {homeScreenViewModel.onExpenseChanged(it)},
-            balanceValue = {homeScreenViewModel.onBalanceChanged(it)}
+            revenueValue = { homeScreenViewModel.onRevenueChanged(it) },
+            expenseValue = { homeScreenViewModel.onExpenseChanged(it) },
+            economyValue = { homeScreenViewModel.onEconomyChanged(it) }
         )
     }
 
@@ -65,12 +67,14 @@ fun HomeScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreenLayout(
+    userName: String,
     revenue: String,
     expense: String,
+    economy: String,
     balance: String,
     revenueValue: (String) -> Unit,
     expenseValue: (String) -> Unit,
-    balanceValue: (String) -> Unit
+    economyValue: (String) -> Unit
 ) {
     val scrollState = rememberLazyListState()
     var showDialog by remember { mutableStateOf(false) }
@@ -100,20 +104,22 @@ fun HomeScreenLayout(
                         singleLine = true
                     )
                     OutlinedTextField(
-                        value = balance,
-                        onValueChange = balanceValue,
-                        label = { Text("Saldo") },
+                        value = economy,
+                        onValueChange = economyValue,
+                        label = { Text("Meta de economia") },
                         singleLine = true
                     )
                 }
             },
             confirmButton = {
-                TextButton(onClick = { showDialog = false }) {
+                TextButton(onClick = {
+                    showDialog = false
+                }) {
                     Text("OK")
                 }
             },
             dismissButton = {
-                TextButton(onClick = {showDialog = false}) {
+                TextButton(onClick = { showDialog = false }) {
                     Text(text = "FECHAR")
                 }
             }
@@ -182,7 +188,13 @@ fun HomeScreenLayout(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 item {
-                    HomeCard()
+                    HomeCard(
+                        balance = balance,
+                        economy = economy,
+                        revenue = revenue,
+                        expense = expense,
+                        userName = userName
+                    )
                 }
                 item {
                     ConfigureCard(onClick = {

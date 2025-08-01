@@ -31,7 +31,19 @@ import com.example.app_orcamind.R
 
 
 @Composable
-fun HomeCard() {
+fun HomeCard(
+    userName: String,
+    revenue: String,
+    expense: String,
+    balance: String,
+    economy: String
+) {
+
+    val balanceFloat = balance.toFloatOrNull() ?: 0f
+    val economyFloat = economy.toFloatOrNull()?.takeIf { it > 0f } ?: 1f // evita divisão por zero
+    val progress = (balanceFloat / economyFloat).coerceIn(0f, 1f)
+
+
     val paddingCardHome = dimensionResource(R.dimen.padding_cardhome)
     Card(
         modifier = Modifier
@@ -55,7 +67,7 @@ fun HomeCard() {
                     .background(Color.DarkGray)
                     .padding(horizontal = 10.dp, vertical = 4.dp)
                     .align(alignment = Alignment.Start),
-                text = "Olá, Matheus",
+                text = "Olá, $userName",
                 style = typography.titleSmall,
                 color = Color.White
             )
@@ -73,35 +85,62 @@ fun HomeCard() {
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text("Receitas", style = typography.labelLarge)
-                    Text("R$ 2.500", style = typography.bodyLarge, color = Color(0xFF388E3C)) // verde
+                    Text(
+                        "R$ $revenue",
+                        style = typography.bodyLarge,
+                        color = Color(0xFF388E3C)
+                    ) // verde
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text("Despesas", style = typography.labelLarge)
-                    Text("R$ 1.800", style = typography.bodyLarge, color = Color(0xFFD32F2F)) // vermelho
+                    Text(
+                        "R$ $expense",
+                        style = typography.bodyLarge,
+                        color = Color(0xFFD32F2F)
+                    ) // vermelho
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text("Saldo", style = typography.labelLarge)
-                    Text("R$ 700", style = typography.bodyLarge, color = Color(0xFF1976D2)) // azul
+                    Text(
+                        "R$ $balance",
+                        style = typography.bodyLarge,
+                        color = Color(0xFF1976D2)
+                    ) // azul
                 }
             }
             Spacer(modifier = Modifier.height(12.dp))
-            Text("Meta de economia: R$ 1.000", style = typography.bodyMedium)
+            Text("Meta de economia: R$ $economy", style = typography.bodyMedium)
             LinearProgressIndicator(
-            progress = { 0.7f },
-            modifier = Modifier.fillMaxWidth(),
-            color = ProgressIndicatorDefaults.linearColor,
-            trackColor = ProgressIndicatorDefaults.linearTrackColor,
-            strokeCap = ProgressIndicatorDefaults.LinearStrokeCap,
+                progress = { progress },
+                modifier = Modifier.fillMaxWidth(),
+                color = ProgressIndicatorDefaults.linearColor,
+                trackColor = ProgressIndicatorDefaults.linearTrackColor,
+                strokeCap = ProgressIndicatorDefaults.LinearStrokeCap,
             )
-            Text("Você já economizou R$ 700 este mês!", style = typography.labelSmall)
+
+            if (balance > economy) {
+                Text(
+                    "Você já economizou o suficiente este mês. parabéns!",
+                    style = typography.labelSmall
+                )
+            }
+
+            if (balance < economy) {
+                Text("Você já economizou R$ $balance este mês!", style = typography.labelSmall)
+            }
         }
     }
 }
 
 
-
 @Preview
 @Composable
 fun HomeCardPreview() {
-    HomeCard()
+    HomeCard(
+        balance = "1500",
+        economy = "500",
+        revenue = "2500",
+        expense = "1000",
+        userName = "Matheus"
+    )
 }
