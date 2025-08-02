@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -28,6 +29,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.app_orcamind.R
+import java.math.BigDecimal
+import kotlin.math.exp
 
 
 @Composable
@@ -43,8 +46,8 @@ fun HomeCard(
     val economyFloat = economy.toFloatOrNull()?.takeIf { it > 0f } ?: 1f // evita divisão por zero
     val progress = (balanceFloat / economyFloat).coerceIn(0f, 1f)
 
-
     val paddingCardHome = dimensionResource(R.dimen.padding_cardhome)
+
     Card(
         modifier = Modifier
             .padding(paddingCardHome),
@@ -64,7 +67,11 @@ fun HomeCard(
             Text(
                 modifier = Modifier
                     .clip(shapes.medium)
-                    .background(Color.DarkGray)
+                    .background(
+                        brush = Brush.linearGradient(
+                            colors = listOf(Color(0xFF6200EA), Color(0xFFAA00FF))
+                        )
+                    )
                     .padding(horizontal = 10.dp, vertical = 4.dp)
                     .align(alignment = Alignment.Start),
                 text = "Olá, $userName",
@@ -72,16 +79,23 @@ fun HomeCard(
                 color = Color.White
             )
             HorizontalDivider(Modifier, DividerDefaults.Thickness, DividerDefaults.color)
+            Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = stringResource(R.string.resume),
                 modifier = Modifier
-                    .padding(top = 4.dp, bottom = 16.dp),
+                    .clip(shape = shapes.medium)
+                    .background(Color.DarkGray)
+                    .padding(top = 4.dp, bottom = 6.dp)
+                    .padding(horizontal = 14.dp),
                 textAlign = TextAlign.Center,
                 style = typography.titleMedium,
+                color = Color.White
             )
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 46.dp)
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text("Receitas", style = typography.labelLarge)
@@ -89,7 +103,7 @@ fun HomeCard(
                         "R$ $revenue",
                         style = typography.bodyLarge,
                         color = Color(0xFF388E3C)
-                    ) // verde
+                    )
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text("Despesas", style = typography.labelLarge)
@@ -97,7 +111,7 @@ fun HomeCard(
                         "R$ $expense",
                         style = typography.bodyLarge,
                         color = Color(0xFFD32F2F)
-                    ) // vermelho
+                    )
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text("Saldo", style = typography.labelLarge)
@@ -105,10 +119,10 @@ fun HomeCard(
                         "R$ $balance",
                         style = typography.bodyLarge,
                         color = Color(0xFF1976D2)
-                    ) // azul
+                    )
                 }
             }
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(26.dp))
             Text("Meta de economia: R$ $economy", style = typography.bodyMedium)
             LinearProgressIndicator(
                 progress = { progress },
@@ -118,14 +132,16 @@ fun HomeCard(
                 strokeCap = ProgressIndicatorDefaults.LinearStrokeCap,
             )
 
-            if (balance > economy) {
+            val balanceExtra = balance.toBigDecimalOrNull() ?: BigDecimal.ZERO
+            val economyExtra = economy.toBigDecimalOrNull() ?: BigDecimal.ZERO
+            if (balanceExtra > economyExtra) {
                 Text(
                     "Você já economizou o suficiente este mês. parabéns!",
                     style = typography.labelSmall
                 )
             }
 
-            if (balance < economy) {
+            if (economyExtra > balanceExtra) {
                 Text("Você já economizou R$ $balance este mês!", style = typography.labelSmall)
             }
         }

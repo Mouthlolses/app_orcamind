@@ -70,10 +70,9 @@ class LoginViewModel @Inject constructor(
                     Log.i("Login", "Falha no login")
                     it.copy(
                         isLoading = false,
-                        loginErrorMessage = "Login ou senha incorretos"
+                        loginErrorMessage = "Email ou senha incorretos"
                     )
                 }
-                resetLoginState()
             }
         }
     }

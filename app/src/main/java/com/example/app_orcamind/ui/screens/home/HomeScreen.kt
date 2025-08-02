@@ -35,6 +35,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.app_orcamind.ui.components.ConfigureCard
 import com.google.android.gms.internal.measurement.zziy
 
@@ -42,7 +45,8 @@ import com.google.android.gms.internal.measurement.zziy
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    homeScreenViewModel: HomeScreenViewModel = viewModel()
+    homeScreenViewModel: HomeScreenViewModel = viewModel(),
+    navController: NavHostController
 ) {
     val uiState by homeScreenViewModel.uiState.collectAsState()
 
@@ -57,7 +61,8 @@ fun HomeScreen(
             balance = uiState.balance,
             revenueValue = { homeScreenViewModel.onRevenueChanged(it) },
             expenseValue = { homeScreenViewModel.onExpenseChanged(it) },
-            economyValue = { homeScreenViewModel.onEconomyChanged(it) }
+            economyValue = { homeScreenViewModel.onEconomyChanged(it) },
+            navController = navController
         )
     }
 
@@ -74,7 +79,8 @@ fun HomeScreenLayout(
     balance: String,
     revenueValue: (String) -> Unit,
     expenseValue: (String) -> Unit,
-    economyValue: (String) -> Unit
+    economyValue: (String) -> Unit,
+    navController: NavHostController
 ) {
     val scrollState = rememberLazyListState()
     var showDialog by remember { mutableStateOf(false) }
@@ -154,7 +160,9 @@ fun HomeScreenLayout(
                     TopAppBar(
                         title = { Text("OrcaMind") },
                         actions = {
-                            TextButton(onClick = {}) {
+                            TextButton(onClick = {
+                                navController.navigate("userAccount")
+                            }) {
                                 Text(
                                     "Conta",
                                     modifier = Modifier
@@ -210,5 +218,8 @@ fun HomeScreenLayout(
 @Preview(showBackground = true)
 @Composable
 fun HomeScreenPreview() {
-    HomeScreen()
+    HomeScreen(
+        homeScreenViewModel = viewModel(),
+        navController = rememberNavController()
+    )
 }

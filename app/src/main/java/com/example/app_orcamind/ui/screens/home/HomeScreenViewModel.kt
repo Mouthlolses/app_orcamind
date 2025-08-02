@@ -5,6 +5,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 class HomeScreenViewModel : ViewModel() {
 
@@ -41,9 +43,9 @@ class HomeScreenViewModel : ViewModel() {
     }
 
     private fun calculateBalance(state: HomeUiState): String {
-        val revenue = state.revenue.toFloatOrNull() ?: 0f
-        val expense = state.expense.toFloatOrNull() ?: 0f
-        return (revenue - expense).toString()
+        val revenue = state.revenue.toBigDecimalOrNull() ?: BigDecimal.ZERO
+        val expense = state.expense.toBigDecimalOrNull() ?: BigDecimal.ZERO
+        return (revenue - expense).toPlainString()
     }
 
 }

@@ -2,12 +2,15 @@ package com.example.app_orcamind.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.app_orcamind.ui.screens.account.UserAccountScreen
 import com.example.app_orcamind.ui.screens.home.HomeScreen
 import com.example.app_orcamind.ui.screens.login.LoginScreen
 import com.example.app_orcamind.ui.screens.register.RegisterScreen
+import com.google.firebase.firestore.auth.User
 
 
 @Composable
@@ -35,12 +38,15 @@ fun AppNavigation() {
         composable(
             "homeScreen"
         ) {
-            HomeScreen()
+            HomeScreen(
+                homeScreenViewModel = viewModel(),
+                navController = navController
+            )
         }
         composable(
-            "homeSummyForm"
+            "userAccount"
         ) {
-
+            UserAccountScreen()
         }
     }
 }
