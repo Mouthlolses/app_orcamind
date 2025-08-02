@@ -35,11 +35,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.app_orcamind.ui.components.ConfigureCard
-import com.google.android.gms.internal.measurement.zziy
 
 
 @OptIn(ExperimentalMaterial3Api::class)
