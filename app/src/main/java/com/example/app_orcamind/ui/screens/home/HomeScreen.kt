@@ -38,6 +38,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.app_orcamind.ui.components.ConfigureCard
+import com.example.app_orcamind.ui.components.TipCard
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -206,6 +207,9 @@ fun HomeScreenLayout(
                     ConfigureCard(onClick = {
                         showDialog = true
                     })
+                }
+                item {
+                    TipCard()
                 }
             }
         }
