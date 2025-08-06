@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.app_orcamind.ui.screens.account.UserAccountScreen
 import com.example.app_orcamind.ui.screens.home.HomeScreen
+import com.example.app_orcamind.ui.screens.home.HomeScreenViewModel
 import com.example.app_orcamind.ui.screens.login.LoginScreen
 import com.example.app_orcamind.ui.screens.register.RegisterScreen
 import com.google.firebase.firestore.auth.User
@@ -39,7 +40,7 @@ fun AppNavigation() {
             "homeScreen"
         ) {
             HomeScreen(
-                homeScreenViewModel = viewModel(),
+                homeScreenViewModel = hiltViewModel(),
                 navController = navController
             )
         }

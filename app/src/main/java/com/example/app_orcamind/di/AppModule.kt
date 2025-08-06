@@ -3,6 +3,7 @@ package com.example.app_orcamind.di
 import com.example.app_orcamind.data.datasource.FirebaseAuthDataSource
 import com.example.app_orcamind.data.repository.UserRegistration
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -11,12 +12,17 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object AppModule  {
+object AppModule {
 
     @Provides
     @Singleton
     fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
 
+    @Provides
+    @Singleton
+    fun provideFirebaseFirestore(): FirebaseFirestore {
+        return FirebaseFirestore.getInstance()
+    }
 
     @Provides
     @Singleton
@@ -24,9 +30,11 @@ object AppModule  {
         return FirebaseAuthDataSource(auth)
     }
 
+
     @Provides
     @Singleton
     fun provideUserRepository(dataSource: FirebaseAuthDataSource): UserRegistration {
         return UserRegistration(dataSource)
     }
+
 }

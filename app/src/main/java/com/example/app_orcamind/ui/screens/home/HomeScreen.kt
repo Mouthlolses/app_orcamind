@@ -34,9 +34,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.app_orcamind.ui.components.ConfigureCard
 import com.example.app_orcamind.ui.components.TipCard
 
@@ -44,7 +43,7 @@ import com.example.app_orcamind.ui.components.TipCard
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    homeScreenViewModel: HomeScreenViewModel = viewModel(),
+    homeScreenViewModel: HomeScreenViewModel = hiltViewModel(),
     navController: NavHostController
 ) {
     val uiState by homeScreenViewModel.uiState.collectAsState()
@@ -61,6 +60,7 @@ fun HomeScreen(
             revenueValue = { homeScreenViewModel.onRevenueChanged(it) },
             expenseValue = { homeScreenViewModel.onExpenseChanged(it) },
             economyValue = { homeScreenViewModel.onEconomyChanged(it) },
+            onClick = { homeScreenViewModel.saveHomeStateFirestore() },
             navController = navController
         )
     }
@@ -79,7 +79,8 @@ fun HomeScreenLayout(
     revenueValue: (String) -> Unit,
     expenseValue: (String) -> Unit,
     economyValue: (String) -> Unit,
-    navController: NavHostController
+    onClick: () -> Unit,
+    navController: NavHostController? = null
 ) {
     val scrollState = rememberLazyListState()
     var showDialog by remember { mutableStateOf(false) }
@@ -118,6 +119,7 @@ fun HomeScreenLayout(
             },
             confirmButton = {
                 TextButton(onClick = {
+                    onClick()
                     showDialog = false
                 }) {
                     Text("OK")
@@ -160,7 +162,7 @@ fun HomeScreenLayout(
                         title = { Text("OrcaMind") },
                         actions = {
                             TextButton(onClick = {
-                                navController.navigate("userAccount")
+                                navController?.navigate("userAccount")
                             }) {
                                 Text(
                                     "Conta",
@@ -220,8 +222,15 @@ fun HomeScreenLayout(
 @Preview(showBackground = true)
 @Composable
 fun HomeScreenPreview() {
-    HomeScreen(
-        homeScreenViewModel = viewModel(),
-        navController = rememberNavController()
+    HomeScreenLayout(
+        userName = "",
+        revenue = "",
+        expense = "",
+        economy = "",
+        balance = "",
+        revenueValue = {},
+        expenseValue = {},
+        economyValue = {},
+        onClick = {}
     )
 }
