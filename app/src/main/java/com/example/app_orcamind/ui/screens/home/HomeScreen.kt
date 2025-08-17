@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -50,9 +51,7 @@ fun HomeScreen(
 ) {
     val uiState by homeScreenViewModel.uiState.collectAsState()
 
-    Column(
-        modifier = Modifier
-    ) {
+    Column {
         HomeScreenLayout(
             userName = uiState.userName,
             revenue = uiState.revenue,
